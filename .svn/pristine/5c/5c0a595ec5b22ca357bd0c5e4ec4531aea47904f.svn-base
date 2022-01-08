@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<?php 
+	
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+<html lang="fr">
+    <head>
+		<meta charset="utf-8">
+        <title> MaStory </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+      	<meta name="theme-color" content="#000000"/>
+		<?php echo e(Html::style('resources/assets/css/style.css')); ?>
+
+		<?php echo e(Html::style('resources/assets/css/bootstrap.min.css')); ?>
+
+		
+		<?php echo e(Html::style('resources/assets/js/jquery-ui/jquery-ui.min.css')); ?>
+
+		
+		<?php echo e(Html::script('resources/assets/js/jquery-1.12.0.js')); ?>
+
+		<?php echo e(Html::script('resources/assets/js/bootstrap.min.js')); ?>
+
+
+		<?php echo e(Html::script('resources/assets/js/jquery-ui/jquery-ui.min.js')); ?>
+
+      
+		<link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet" type="text/css">
+		<link rel="manifest" href="/manifest.json">	
+      
+        <!-- icon in the highest resolution we need it for -->
+        <link rel="icon" sizes="192x192" href="/resources/assets/icons/icon-192x192.png">
+        <!-- reuse same icon for Safari -->
+        <link rel="apple-touch-icon" href="/resources/assets/icons/apple-icon.png">
+  </head>
+
+	<body>
+		<div class="wrapper">
+			<!-- Page Content Holder -->
+			<div id="content">
+				<div class="col-xs-12 col-sm-12 col-md-12">
+					<?php echo $__env->yieldContent('content'); ?>
+				</div>
+			</div>
+		</div>
+        <script>
+		// CODELAB: Register service worker.
+		if ('serviceWorker' in navigator) {
+		  window.addEventListener('load', () => {
+			navigator.serviceWorker.register('/service-worker.js')
+			.then((reg) => {
+			  console.log('Service worker registered.', reg);
+			});
+		  });
+		}
+        </script>
+	</body>
+</html>

@@ -1,0 +1,37 @@
+@extends('admin.layout.cooptationlayout')
+
+@section('content')
+
+	<?php 
+
+		$baseUrl = App::make('url')->to('/');
+		$title = 'OFFRES';
+	?>
+
+	<div class=" pages container">
+			<div class="bouton">
+				<a href="javascript:history.back()"><button class="voir"><img src="{{ asset('public/icons/back1.png') }}">RETOUR</button></a>
+				<a href="{{route('admin.offres.create')}}"><button class="voir">PUBLIER</button></a>
+			</div>
+			<div class="listeCooptation liste_offre_admin">
+				<h2 class="text-center text_margin_bottom">LES OFFRES D'EMPLOI SUR MaStory</h2>
+				@foreach($offres as $offre)
+					<div class="col-md-offset-2 col-md-offset-8 liste_offres_admin">
+						<p>{{ $offre->lieu }}</p>
+						<p>Réf : {{ $offre->reference }}</p>
+						<p>Catégorie : {{ $offre->label }}</p>
+						<a class="liste_offre_admin titre_offres" href="{{ 'offres' . '/' .  $offre->id }}"><h4 class="">{{ $offre->poste }}</h4></a>
+						<p class="description "><a class="liste_offre_admin" href="{{'offres' . '/' .  $offre->id }}">{{substr($offre->description, 0, 500)}}...</a></p>
+					</div>
+					<hr>
+					<br>
+					<br>
+	
+				@endforeach
+			</div>
+
+			
+	</div>
+
+
+@stop

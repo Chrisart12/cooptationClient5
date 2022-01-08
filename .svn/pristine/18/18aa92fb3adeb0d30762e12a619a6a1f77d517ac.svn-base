@@ -1,0 +1,127 @@
+<<<<<<< .mine
+.container{
+    margin-top: 130px;
+    // margin-bottom: 80px;
+}
+.jobs-container{
+    margin-bottom: 80px;
+    font-size: 1.3em;
+
+    @include BigSmartphonesPortrait{
+        font-size: 0.8em;
+
+        .jobs-btn{
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 40px;
+        } 
+    }
+
+    .jobs-btn{
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 40px;
+    }
+
+    .jobs-list_label{
+        padding-right: 20px;
+        padding-left: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        display: flex;
+        background-color: $titleColorRed;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        color: $backgroundColor;
+        border-radius: $borderRadiux;
+        @include shadowList;
+    }
+
+    .jobs-list {
+        padding-right: 20px;
+        padding-left: 20px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        background-color: $backgroundColorTwo;
+        border-radius: $borderRadiux;
+        display: flex;
+        justify-content: space-between;
+        @include shadowList;
+
+        &:hover {
+            color: white;
+            background-color: $textColorBlackOne;
+        }
+    }
+
+    .jobs-list_link{
+        color: $textColorBlackOne;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+    
+}
+
+
+||||||| .r0
+=======
+.container{
+    margin-top: 130px;
+    // margin-bottom: 80px;
+}
+.jobs-container{
+    margin-bottom: 80px;
+    font-size: 1.3em;
+
+    @include BigSmartphonesPortrait{
+        font-size: 0.8em;
+
+        .jobs-btn{
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 40px;
+        } 
+    }
+
+    .jobs-btn{
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 40px;
+    }
+
+    .jobs-list_label{
+        padding-right: 20px;
+        padding-left: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        display: flex;
+        background-color: $titleColorRed;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        color: $backgroundColor;
+        border-radius: $borderRadiux;
+        @include shadowList;
+    }
+
+    .jobs-list {
+        padding-right: 20px;
+        padding-left: 20px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        background-color: $backgroundColorTwo;
+        border-radius: $borderRadiux;
+        display: flex;
+        justify-content: space-between;
+        @include shadowList;
+
+        .jobs-list_link{
+            color: $textColorBlackOne;
+        }
+    }
+    
+}
+
+
+>>>>>>> .r87

@@ -1,0 +1,429 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use DB;
+use Auth;
+use Datetime;
+use Lang;
+use Redirect;
+use Response;
+use App\Http\Requests\CandidatsRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
+use App\Http\Requests;
+use App\User;
+use App\Region;
+use App\Responsible;
+use App\Story;
+use App\Candidat;
+use App\Historic;
+use App\Step;
+use App\Account;
+//use App\Repositories\GalleryRepository;
+
+class CooptationController extends Controller
+{
+   /**
+	 * Affiche la vue de cooptation
+	*/
+   public function index(Request $request)
+   {
+
+//$galleryRepository = (new App\Repositories\GalleryRepository)->gallery();
+   	// authentification nécessaire
+		if(Auth::user() != null){
+			if(Auth::user()->role == "admin"){
+								// parameters
+				$region = $request->region != null ? $request->region : -1;
+				$responsible = $request->responsible != null ? $request->responsible : -1;
+				$isTop30 = $request->isTop30 != null ? true : false;
+				
+				// var_dump($region);
+				// dd($request->region);
+				
+				// filters
+				$filters['region'] = $region;
+				$filters['responsible'] = $responsible;
+				$filters['isTop30'] = $isTop30;
+				
+				// var_dump($region);
+				
+				// récupération des stories
+				// $stories = Story::getTopStories();
+				$stories = Story::getTopStoriesByFilter($filters);
+				$regions = Region::getRegions();
+				$responsibles = Responsible::getResponsibles();
+				
+				// top30
+				$s = array();
+				$cpt = 1;
+				if($filters['isTop30']){
+					foreach($stories as $story){
+						$s[] = $story;
+						$cpt++;
+						if($cpt > 30){
+							break;
+						}
+					}
+					// $stories = collect($s);
+					// dd($stories->items());
+					// $stories->items(collect($s));
+					// $stories->setCollection(collect($s));
+				}
+				
+				// dd($stories[0]->user()->region());
+				// dd($stories);
+				
+				// regions
+				$r = array();
+				$r[-1] = ucfirst(Lang::get('admin.all-regions'));
+				foreach($regions as $region){
+					$r[$region->id] = $region->label;
+				}
+				$regions = $r;
+				
+				// responsibles
+				$r = array();
+				$r[-1] = ucfirst(Lang::get('admin.all-responsibles'));
+				foreach($responsibles as $responsible){
+					$r[$responsible->id] = $responsible->label;
+				}
+				$responsibles = $r;
+				
+				//COOPTATION
+				// Sélection des collaborateurs ayant proposé des candidats
+				$cooptants = Account::groupBy('accounts.user_id')
+				             ->select('accounts.user_id','users.lastname', 'users.firstname', DB::raw('count(*) as cooptes, sum(accounts.score) as score'))
+							 ->join('users', 'users.id', '=', 'accounts.user_id' )
+							 ->orderBy('users.lastname')
+							 ->get();
+
+
+				 //$cooptants = Account::select('accounts.*')->distinct()->get();
+				 //dd($cooptants);
+				
+				return view('admin.cooptation', ['stories' => $stories->appends(Input::except('page')), 'regions' => $regions, 'responsibles' => $responsibles, 'filters' => $filters, 'cooptants' =>  $cooptants]);
+			} else{
+
+				return Redirect::route("admin/logout");
+			}
+		} else{
+			return Redirect::route("admin/login")->withErrors(ucfirst(Lang::get('label.please-login')));
+		}
+	}
+
+	/**
+	 * Affiche la vue du cooptant avec tous ses cooptés
+	*/
+	public function showCooptant(Request $request, $id)
+	{
+			// authentification nécessaire
+		if(Auth::user() != null){
+			if(Auth::user()->role == "admin"){
+								// parameters
+				$region = $request->region != null ? $request->region : -1;
+				$responsible = $request->responsible != null ? $request->responsible : -1;
+				$isTop30 = $request->isTop30 != null ? true : false;
+				
+				// var_dump($region);
+				// dd($request->region);
+				
+				// filters
+				$filters['region'] = $region;
+				$filters['responsible'] = $responsible;
+				$filters['isTop30'] = $isTop30;
+				
+				// var_dump($region);
+				
+				// récupération des stories
+				// $stories = Story::getTopStories();
+				$stories = Story::getTopStoriesByFilter($filters);
+				$regions = Region::getRegions();
+				$responsibles = Responsible::getResponsibles();
+				
+				// top30
+				$s = array();
+				$cpt = 1;
+				if($filters['isTop30']){
+					foreach($stories as $story){
+						$s[] = $story;
+						$cpt++;
+						if($cpt > 30){
+							break;
+						}
+					}
+					// $stories = collect($s);
+					// dd($stories->items());
+					// $stories->items(collect($s));
+					// $stories->setCollection(collect($s));
+				}
+				
+				// dd($stories[0]->user()->region());
+				// dd($stories);
+				
+				// regions
+				$r = array();
+				$r[-1] = ucfirst(Lang::get('admin.all-regions'));
+				foreach($regions as $region){
+					$r[$region->id] = $region->label;
+				}
+				$regions = $r;
+				
+				// responsibles
+				$r = array();
+				$r[-1] = ucfirst(Lang::get('admin.all-responsibles'));
+				foreach($responsibles as $responsible){
+					$r[$responsible->id] = $responsible->label;
+				}
+				$responsibles = $r;
+				
+				//COOPTATION
+				// Sélection du collaborateur à partir de son id
+				$cooptant = User::find($id);
+				// Sélection de tous les cooptés du collaborateur
+				$userCooptes = Account::select('accounts.candidat_id', 'accounts.step_id', 'accounts.user_id', 'accounts.score', 'candidats.lastname', 'candidats.firstname', 'candidats.reference')
+									->where('accounts.user_id', '=', $id)
+									->join('candidats', 'candidats.id', '=', 'accounts.candidat_id')
+									->get();
+									//dd($userCooptes);
+				
+				return view('admin.cooptant', ['stories' => $stories->appends(Input::except('page')), 'regions' => $regions, 'responsibles' => $responsibles, 'filters' => $filters, 'cooptant' =>  $cooptant, 'userCooptes' => $userCooptes]);
+			} else{
+
+				return Redirect::route("admin/logout");
+			}
+		} else{
+			return Redirect::route("admin/login")->withErrors(ucfirst(Lang::get('label.please-login')));
+		}
+		
+	}
+
+	/**
+	 * Affiche la vue de détail du coopté 
+	*/
+	public function showCandidat(Request $request, $id)
+	{
+			// authentification nécessaire
+		if(Auth::user() != null){
+			if(Auth::user()->role == "admin"){
+								// parameters
+				$region = $request->region != null ? $request->region : -1;
+				$responsible = $request->responsible != null ? $request->responsible : -1;
+				$isTop30 = $request->isTop30 != null ? true : false;
+				
+				// var_dump($region);
+				// dd($request->region);
+				
+				// filters
+				$filters['region'] = $region;
+				$filters['responsible'] = $responsible;
+				$filters['isTop30'] = $isTop30;
+				
+				// var_dump($region);
+				
+				// récupération des stories
+				// $stories = Story::getTopStories();
+				$stories = Story::getTopStoriesByFilter($filters);
+				$regions = Region::getRegions();
+				$responsibles = Responsible::getResponsibles();
+				
+				// top30
+				$s = array();
+				$cpt = 1;
+				if($filters['isTop30']){
+					foreach($stories as $story){
+						$s[] = $story;
+						$cpt++;
+						if($cpt > 30){
+							break;
+						}
+					}
+					// $stories = collect($s);
+					// dd($stories->items());
+					// $stories->items(collect($s));
+					// $stories->setCollection(collect($s));
+				}
+				
+				// dd($stories[0]->user()->region());
+				// dd($stories);
+				
+				// regions
+				$r = array();
+				$r[-1] = ucfirst(Lang::get('admin.all-regions'));
+				foreach($regions as $region){
+					$r[$region->id] = $region->label;
+				}
+				$regions = $r;
+				
+				// responsibles
+				$r = array();
+				$r[-1] = ucfirst(Lang::get('admin.all-responsibles'));
+				foreach($responsibles as $responsible){
+					$r[$responsible->id] = $responsible->label;
+				}
+				$responsibles = $r;
+				
+				//COOPTATION
+				// Sélection du collaborateur à partir de son id
+				//$coopte = $id;
+				//dd($coopte);
+				// Sélection de tous les cooptés du collaborateur
+				$candidat = Account::select('accounts.candidat_id', 'accounts.step_id', 'candidats.lastname', 'candidats.firstname', 'candidats.reference', 'candidats.created_at as date_de_creation', 'steps.label', 'steps.step_number', 'historics.created_at as date_etape')
+									->where('accounts.candidat_id', '=', $id)
+									->join('candidats', 'candidats.id', '=', 'accounts.candidat_id')
+									->join('steps', 'steps.id', '=', 'accounts.step_id')
+									->join ('historics', 'steps.id', '=', 'historics.step_id')
+									->first();
+									//dd($candidat);
+									//dd($candidat->creation_date);
+									//as creation_date
+									//historics.created_at as historic_date
+				
+				return view('admin.candidat', ['stories' => $stories->appends(Input::except('page')), 'regions' => $regions, 'responsibles' => $responsibles, 'filters' => $filters, 'candidat' => $candidat]);
+			} else{
+
+				return Redirect::route("admin/logout");
+			}
+		} else{
+			return Redirect::route("admin/login")->withErrors(ucfirst(Lang::get('label.please-login')));
+		}
+		
+	}
+
+	/**
+	 * Traitement des étapes
+	*/
+	public function etapes(Request $request, $step)
+	{
+  		
+			// authentification nécessaire
+		if(Auth::user() != null){
+			if(Auth::user()->role == "admin"){
+								// parameters
+				$region = $request->region != null ? $request->region : -1;
+				$responsible = $request->responsible != null ? $request->responsible : -1;
+				$isTop30 = $request->isTop30 != null ? true : false;
+				
+				// var_dump($region);
+				// dd($request->region);
+				
+				// filters
+				$filters['region'] = $region;
+				$filters['responsible'] = $responsible;
+				$filters['isTop30'] = $isTop30;
+				
+				// var_dump($region);
+				
+				// récupération des stories
+				// $stories = Story::getTopStories();
+				$stories = Story::getTopStoriesByFilter($filters);
+				$regions = Region::getRegions();
+				$responsibles = Responsible::getResponsibles();
+				
+				// top30
+				$s = array();
+				$cpt = 1;
+				if($filters['isTop30']){
+					foreach($stories as $story){
+						$s[] = $story;
+						$cpt++;
+						if($cpt > 30){
+							break;
+						}
+					}
+					// $stories = collect($s);
+					// dd($stories->items());
+					// $stories->items(collect($s));
+					// $stories->setCollection(collect($s));
+				}
+				
+				// dd($stories[0]->user()->region());
+				// dd($stories);
+				
+				// regions
+				$r = array();
+				$r[-1] = ucfirst(Lang::get('admin.all-regions'));
+				foreach($regions as $region){
+					$r[$region->id] = $region->label;
+				}
+				$regions = $r;
+				
+				// responsibles
+				$r = array();
+				$r[-1] = ucfirst(Lang::get('admin.all-responsibles'));
+				foreach($responsibles as $responsible){
+					$r[$responsible->id] = $responsible->label;
+				}
+				$responsibles = $r;
+				
+				
+				//COOPTATION
+				// Sélection de tous les cooptés du collaborateur
+				$candidatId = $request->input('id');
+				$candidat = Account::select('accounts.candidat_id', 'accounts.user_id', 'accounts.step_id', 'accounts.score', 'candidats.lastname', 'candidats.firstname', 'candidats.reference', 'candidats.created_at', 'steps.label', 'steps.step_number', 'steps.point', 'users.id as admin_id', 'users.lastname as admin_lastname', 'users.firstname as admin_firstname')
+									->where('accounts.candidat_id', '=', $candidatId)
+									->join('candidats', 'candidats.id', '=', 'accounts.candidat_id')
+									->join('steps', 'steps.id', '=', 'accounts.step_id')
+									->join('users', 'users.id', '=', 'accounts.user_id' )
+									->first();
+									//dd($candidat);
+
+				//Récupération des données du cooptant, du coopté, et de l'admin qui a validé l'étape.					
+				$score = $candidat->score;
+				$step = $candidat->step_id;
+				$stepPoint = $candidat->point;
+				$candidatId = $candidat->candidat_id; 
+				$userId = $candidat->user_id;
+				$adminId = $candidat->admin_id;
+				$adminLastname = $candidat->admin_lastname;
+				$adminFirstname = $candidat->admin_firstname;
+				//dd($adminLastname);
+
+				
+				//Mis à jour des données dans la table account
+				//On compte le nombre total d'étapes dans la base de données
+				$totalSteps = Step::select('steps.step_number')->count();
+
+				//On utilise une transaction
+				DB::beginTransaction();
+				//On vérifie que l'étape finale n'est pas atteinte
+				try {
+
+					if($step <= $totalSteps) {
+					
+						$account = DB::table('accounts')
+								->where('candidat_id', $candidatId)
+								->update(['score' => $score + $stepPoint,
+										  'step_id' => $step + 1
+										]);
+
+						//Insertion des données dans la table historics après le update
+						$historic = new Historic;
+						$historic->user_id = $userId;
+						$historic->candidat_id = $candidatId;
+						$historic->step_id = $step + 1;
+						$historic->admin_id = $adminId;
+						$historic->admin_lastname = $adminLastname;
+						$historic->admin_firstname = $adminFirstname;
+						$historic->save();
+					}
+
+				} catch (ValidationException $e) {
+					DB::rollback();
+				}
+
+				DB::commit();
+				
+		       //return redirect()->action('CooptationController@showCandidat',['request'=> $request, 'id'=> $request->input('id')]);
+			   return view('admin.candidat', ['stories' => $stories->appends(Input::except('page')), 'regions' => $regions, 'responsibles' => $responsibles, 'filters' => $filters, 'candidat' => $candidat]);
+			} else{
+
+				return Redirect::route("admin/logout");
+			}
+		} else{
+			return Redirect::route("admin/login")->withErrors(ucfirst(Lang::get('label.please-login')));
+		}
+  		
+	}
+}

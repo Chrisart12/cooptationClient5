@@ -1,0 +1,14 @@
+.errors_page{
+    text-align: center;
+    color: $titleColorRed;
+    font-size: 3em;
+}
+
+.container_errors {
+    padding-top: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}

@@ -1,0 +1,5 @@
+.errors_page{
+    text-align: center;
+    color: $titleColorRed;
+    font-size: 3em;
+}

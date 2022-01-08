@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<?php 
+	
+	$baseUrl = App::make('url')->to('/');
+	$layout = "story";
+	
+?>
+<html lang="fr">
+    <head>
+		<meta charset="utf-8" name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+        <title> Administration </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+      	<meta name="theme-color" content="#000000"/>
+		<?php echo e(Html::style('resources/assets/css/bootstrap.min.css')); ?>
+
+		<?php echo e(Html::style('resources/assets/js/jquery-ui/jquery-ui.min.css')); ?>
+
+		<?php echo e(Html::style('resources/assets/css/admin/style.css')); ?>
+
+		<?php echo e(Html::style('resources/assets/css/admin/story/story.css')); ?>
+
+		
+		<?php echo e(Html::script('resources/assets/js/jquery-1.12.0.js')); ?>
+
+		<?php echo e(Html::script('resources/assets/js/bootstrap.min.js')); ?>
+
+		<?php echo e(Html::script('resources/assets/js/jquery-ui/jquery-ui.min.js')); ?>
+
+      
+        <!-- icon in the highest resolution we need it for -->
+        <link rel="icon" sizes="192x192" href="<?php echo e($baseUrl); ?>/resources/assets/icons/icon-192x192.png">
+      
+		<link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet" type="text/css">
+  </head>
+
+	<body>
+		<div class="wrapper">
+			<?php echo $__env->make('admin.partials.header', ['title'=>strtoupper(Lang::get('admin.contributor')), 'layout'=>$layout], array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+			<!-- Page Content Holder -->
+			<div class="container">
+				<?php echo $__env->yieldContent('content'); ?>
+			</div>
+		</div>
+		<!-- ionicons -->
+		<script src="https://unpkg.com/ionicons@4.5.5/dist/ionicons.js"></script>
+	</body>
+</html>

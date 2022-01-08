@@ -1,0 +1,80 @@
+<?php $__env->startSection('content'); ?>
+
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+<div class="row login">
+	<div class="col-xs-12 content">
+		<div class="row">
+			<div class="col-xs-12"> 
+				<?php echo e(Form::open(array('route' => ['admin/login']))); ?>
+
+					<?php echo e(csrf_field()); ?> 
+					
+					<div class="row">
+						<div class="col-xs-12"> 
+							<h2><?php echo e(mb_strtoupper(Lang::get('admin.mastory'))); ?></h2>
+						</div>
+						<div class="col-xs-12"> 
+							<h3><?php echo e(ucfirst(Lang::get('admin.administration'))); ?></h3>
+						</div>
+					</div>
+					
+					<hr class="noBorder" />
+					
+					<div class="row">
+						<div class="col-xs-12"> 
+							<?php echo e(Form::input('text', 'token', '', ['class' => 'formInput', 'placeholder' => ucfirst(Lang::get('label.login'))])); ?>
+
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12"> 
+							<?php echo e(Form::input('password', 'password', '', ['class' => 'formInput', 'placeholder' => ucfirst(Lang::get('label.password'))])); ?> 
+						</div>
+					</div>
+					
+					<hr class="noBorder" />
+					
+					<div class="row">
+						<div class="col-xs-12"> 
+							<?php echo e(Form::submit(strtoupper(Lang::get('label.signin')), ['class' => 'button'])); ?> 
+						</div>
+					</div>
+				<?php echo e(Form::close()); ?>
+
+					
+				<hr class="noBorder" />
+				
+				<!--
+				<div style="position:fixed; bottom:2vh; left:0; width:100%;"> 
+					<span class="title"> 
+						<?php echo ucfirst(Lang::get('label.good-story-to-tell')); ?> 
+					</span>
+				</div>
+				-->
+					
+				<?php if($errors->any()): ?>
+					<div class="alert alert-danger" role="alert">
+						<?php foreach($errors->all() as $error): ?>
+							<?php echo e($error); ?>
+
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
+				<?php if(Session::has('message')): ?>
+					<div class="alert alert-info">
+						<?php echo e(Session::get('message')); ?>
+
+					</div>
+				<?php endif; ?>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout.loginlayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

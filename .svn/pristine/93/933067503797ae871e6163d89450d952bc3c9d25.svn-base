@@ -1,0 +1,140 @@
+<<<<<<< .mine
+// Centrer au milieu en largeur et en longueur
+.login-container_flex{
+    width: 100%;
+    height: 100vh;
+    background-color: $titleColorRed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .login_mastory{
+        font-size: 43px;
+        // color: $textColorBlackOne;
+        color: White;
+        font-weight: 900;
+        margin-bottom: 50px;
+    }
+}
+
+.login-btn {
+    background-color: $textColorBlackOne;
+    color: $backgroundColor;
+    border-radius: $borderRadiux;
+    width: 200px;
+    height: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+    @include borderInput;
+}
+
+.login-form{
+    background-color: $textColorBlackOne;
+    color: $backgroundColor;
+    border-radius: $borderRadiux;
+    width: 200px;
+    height: 40px;
+    padding-left: 35px;
+    padding-right: 10px;
+    @include borderInput;
+}
+
+.login-btn{
+    font-size: 1.2em;
+}
+
+.has-error .help-block, .has-error .control-label, 
+.has-error .radio, .has-error .checkbox, 
+.has-error .radio-inline, .has-error .checkbox-inline, 
+.has-error.radio label, .has-error.checkbox label, 
+.has-error.radio-inline label, 
+.has-error.checkbox-inline label {
+    color: $backgroundColor;
+    position: absolute;
+    right: 50%;
+    text-align: center;
+    top: 41%;
+    width: 350px;
+    word-wrap: wrap;
+    transform: translate(50%);
+
+    @include BigSmartphonesPortrait {
+        top: 38%;
+    }
+
+}
+
+.input-icons i { 
+    position: absolute; 
+} 
+
+.input-icons { 
+    width: 100%; 
+    margin-bottom: 10px; 
+} 
+
+.icon { 
+    padding: 13px 0px 15px 0px; 
+    color: $textColorBlackTwo; 
+    min-width: 40px; 
+    text-align: center; 
+} 
+
+.icon_eyes {
+    padding-top: 13px;
+    margin-left: -35px;
+    color: $textColorBlackTwo; 
+    min-width: 40px; 
+    text-align: center; 
+}
+
+#fa_eye_slash {
+    display: none;
+}
+
+// .input-field { 
+//     width: 100%; 
+//     padding: 10px; 
+//     text-align: center; 
+// } 
+
+
+
+||||||| .r0
+=======
+// Centrer au milieu en largeur et en longueur
+.login-container_flex{
+    width: 100%;
+    height: 100vh;
+    background-color: $titleColorRed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .login_mastory{
+        font-size: 43px;
+        color: $textColorBlackOne;
+        font-weight: 900;
+        margin-bottom: 50px;
+    }
+}
+
+.login-btn,
+.login-form{
+    background-color: $textColorBlackOne;
+    color: $backgroundColor;
+    border-radius: $borderRadiux;
+    width: 200px;
+    height: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+    @include borderInput;
+}
+
+.login-btn{
+    font-size: 1.2em;
+}
+
+>>>>>>> .r87

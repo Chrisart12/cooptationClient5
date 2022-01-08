@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Http\Controllers;
+
+//use Illuminate\Support\Facades\Auth;
+use Auth;
+use App\Http\Requests;
+use App\Http\Requests\CandidatsRequest;
+use App\User;
+use App\Candidat;
+use App\Historic;
+use App\Step;
+use App\Account;
+
+class OfferController extends Controller
+{
+    public function showFormOffer()
+    {
+    	return view('offer');
+    }
+
+    public function postFormOffer(CandidatsRequest $request)
+    {
+		//Insertion des candidats dans la table candidats.
+		$candidat = new Candidat;
+		$candidat->lastName = $request->input('lastName');
+		$candidat->firstName = $request->input('firstName');
+		$candidat->reference = $request->input('reference');
+		$candidat->save();
+
+		//Insertion du score dans la table accounts.
+		//Le score est à 0 lors de l'envoi du candidat
+		//Le step est à 1 lors de l'envoi du candidat
+		$account = new Account;
+		$account->score = 0;
+		$account->user_id = Auth::user()->id;
+		$account->candidat_id = $candidat->id;
+		$account->step_id = 1;
+		$account->save();
+
+		//Insertion de l'historique dans la table historics.
+		$historic = new Historic;
+		$historic->user_id = Auth::user()->id;
+		$historic->candidat_id = $candidat->id;
+		$historic->step_id = 1;
+		$historic->save();
+
+
+		//dd($account->candidat_id);
+		//$candidat->user_id = Auth::user()->id;
+		// $candidat = Candidat::create($request->all());
+
+    	return view('confirmOffer', compact('candidat'));
+    }
+
+}

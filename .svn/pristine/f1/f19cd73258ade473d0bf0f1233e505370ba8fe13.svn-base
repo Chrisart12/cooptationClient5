@@ -1,0 +1,98 @@
+<?php $__env->startSection('content'); ?>
+
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+<div class="row story">
+	<div class="col-xs-12 content">
+		<!-- <?php echo $__env->make('partials.storybox', ['story'=>$story], array_except(get_defined_vars(), array('__data', '__path')))->render(); ?> -->
+		<div class="box" style="background-image: url('<?php echo e(Config::get('custom.project_url')); ?>resources/pictures/<?php echo e($story->user()->token); ?>/<?php echo e($story->picture_path); ?>');">
+			<div style="background-color: #FFFFFF; width: 100%; height: 15vh; position: fixed; bottom: 0;margin-bottom: 8vh;">
+				<div class="row">
+					<div class="col-xs-3 logo" style="height:15vh;padding-right:0;">
+						<div id="like" style="height: 50%; display:flex; align-items: center;justify-content: center;font-size:5vh; color: #c10927;">
+							<?php if($story->hasLikeFromUser(Auth::user()->id)): ?>
+								<ion-icon id="icon" name="heart" onClick="like()"></ion-icon>
+							<?php else: ?>
+								<ion-icon id="icon" name="heart-empty" onClick="like()"></ion-icon>
+							<?php endif; ?>
+						</div>
+						<div id="logo" style="height: 50%; display:flex; align-items: center;justify-content: center;">
+							<img style="height:5vh;" src="<?php echo e(Config::get('custom.project_url')); ?>resources/assets/img/logo_color.png" />
+						</div>
+					</div>
+					<div class="col-xs-9" style="padding-left:0;">
+						<div style="text-align: left;overflow: hidden; overflow-y: scroll; height: 15vh; padding:1vh; font-size:2vh;">
+							<?php echo $story->story; ?>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	// variables
+	var baseUrl = "<?php echo $baseUrl; ?>";
+	var userId = <?php echo Auth::user()->id; ?>;
+	var storyId = <?php echo $story->id; ?>;
+
+	// action de like / delike
+	var like = function() {
+		//  
+		likeStory(userId, storyId);
+	}
+	
+	// 
+	var likeStory = function(userId, storyId){
+		var data = {
+			userId: userId,
+			storyId: storyId
+		}
+		  
+		data = JSON.stringify(data);
+
+		$.ajaxSetup({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			}
+		});
+		
+		$.ajax({
+			type: "POST",
+			url: baseUrl + "/updateLike",
+			// url: "updateLike",
+			data: data,
+			contentType: 'application/json',
+			success: function(data) {
+				// on masque le popup d'ajout de nouveau support
+				if(data['status'].length > 0){
+					if(data['status'] == "success"){
+						// message de retour après succès
+						var like = data['data'];
+						//On met à jour l'icône de like en fonction du retour
+						if(like == "creation"){
+							$('#like #icon').attr('name', 'heart');
+						} else{
+							$('#like #icon').attr('name', 'heart-empty');
+						}
+					} else{
+						alert(data['message']);
+					}
+				}
+			},
+			error: function( data, status, err ) {
+				// alert(ucfirst(jsLang['label']['errorOccuredDuringLessonSupportSave']));
+				alert("Une erreur est survenue.");
+			},
+		});
+	}
+</script>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.storylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

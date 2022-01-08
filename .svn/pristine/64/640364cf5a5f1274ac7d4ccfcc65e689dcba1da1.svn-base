@@ -1,0 +1,54 @@
+<?php $__env->startSection('content'); ?>
+
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+<div class="container listeCooptation designation">
+	<div class="text-center"><?php echo e(strtoupper($cooptant->lastname . ' ' . $cooptant->firstname)); ?></div>
+		<br>
+		<br>
+	<div class="row">
+		<div class="col-lg-3">CANDIDATS
+			<br>
+			<br>
+			<p>
+				<?php foreach($userCooptes as $userCoopte): ?>
+					<div><?php echo e($userCoopte->lastname . ' ' . $userCoopte->firstname); ?></div>
+					<br>
+				<?php endforeach; ?>
+			</p>
+
+		</div>
+		<div class="col-lg-3">POSTE
+		</div>
+		<div class="col-lg-3">REFERENCE
+			<br>
+			<br>
+			<p>
+				<?php foreach($userCooptes as $userCoopte): ?>
+					<div><?php echo e($userCoopte->reference); ?></div>
+					<br>
+				<?php endforeach; ?>
+			</p>
+		</div>
+		<div class="col-lg-3">POINTS
+			<br>
+			<br>
+			<p>
+				<?php foreach($userCooptes as $userCoopte): ?>
+					<div><?php echo e($userCoopte->score); ?> <a href="<?php echo e('candidat' . '/' . $userCoopte->candidat_id); ?>"><button class="col-lg-offset-4 voir">DETAIL</button></a></div>
+					<br>
+				<?php endforeach; ?>
+			</p>
+		</div>
+		
+	</div>
+	
+</div>
+
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout.gallerylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

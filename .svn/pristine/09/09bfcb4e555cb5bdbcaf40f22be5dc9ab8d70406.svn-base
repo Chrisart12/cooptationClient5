@@ -1,0 +1,51 @@
+<?php $__env->startSection('content'); ?>
+
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+<div class="row gallery">
+	<div class="col-xs-12 content">
+		<div class="row stories">
+			<?php foreach($stories as $story): ?>
+				<div class="col-xs-6 col-sm-6  col-md-4  col-lg-3 storyBox">
+					<a href="<?php echo e($baseUrl); ?>/admin/story/<?php echo e($story->id); ?>">
+						<div class="story" style="background-position-x:<?php echo e($story->bg_position_x); ?>;background-position-y:<?php echo e($story->bg_position_y); ?>;background-image: url('<?php echo e(Config::get('custom.project_url')); ?>resources/pictures/<?php echo e($story->user()->token); ?>/<?php echo e($story->picture_path); ?>');">
+							<div class="fullname">
+								<?php echo e($story->user()->getFullname()); ?>
+
+								<?php if($story->is_demo): ?>
+									(démo)
+								<?php endif; ?>
+							</div>
+							<div class="like">
+								<ion-icon name="heart"></ion-icon>
+							</div>
+							<div class="likeCount">
+								<b><?php echo e($story->likes_count); ?></b>
+							</div>
+						</div>
+					</a>
+				</div>
+			<?php endforeach; ?>
+      	</div>
+	</div>
+</div>
+
+<script>
+	$(document).on('click', '#top30', function(){
+		if($('#isTop30').is(":checked")){
+			// alert('checked');
+			$('#isTop30').prop('checked', false);
+		} else{
+			// alert('unchecked');
+			$('#isTop30').prop('checked', true);
+		}
+		$('form[name="filter"]').submit();
+	});
+</script>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout.gallerylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

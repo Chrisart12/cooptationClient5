@@ -1,0 +1,41 @@
+
+.navbar-default{
+    background-color: $titleColorRed;
+    border-color: $textColorBlackOne;
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    
+    @include BigSmartphonesPortrait{
+        padding-bottom: 20px;
+    }
+
+    .navbar-text{
+        color: $textColorBlackOne;
+        // font-weight: 700;
+        font-size: 1.5em;
+
+        margin-left: 100px;
+    }
+    
+}
+
+.navbar-default .navbar-nav > li > a{
+    color: $backgroundColor;
+    font-size: 1.2em;
+
+    &:hover{
+        color: $titleColorRed;
+        background-color: $textColorBlackOne;
+        border-radius: $borderRadiux;
+    }
+}
+
+
+.app-deconnection{
+    width: 60%;
+
+    @include BigSmartphonesPortrait{
+        width: 10%;
+    }
+}

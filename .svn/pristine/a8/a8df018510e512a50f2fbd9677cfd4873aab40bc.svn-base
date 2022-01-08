@@ -1,0 +1,45 @@
+<?php $__env->startSection('content'); ?>
+
+	<?php 
+
+		$baseUrl = App::make('url')->to('/');
+		
+	?>
+	<div class="scrollable">
+	<div class="row text-center" id="menu">
+		
+			<p class="texte">Veuillez renseigner les coordonées du candidat et cliquer sur Envoyer.</p>
+			<div  class="col-xs-offset-2 col-xs-8 formOffer">
+				<?php echo Form::open(['url' => 'offer']); ?>
+
+						<div class="form-group <?php echo $errors->has('lastName') ? 'has-error' : ''; ?>">
+							<?php /* <?php echo Form::label("nom", "Nom*", ['class' => 'control-label']); ?> */ ?>
+							<?php echo e(Form::text('lastName', null, ['class' => 'form-control', 'placeholder' => 'Nom*'])); ?>
+
+							<?php echo $errors->first('lastName', '<small class="help-block">:message</small>'); ?>
+
+						</div>
+						<div class="form-group <?php echo $errors->has('firstName') ? 'has-error' : ''; ?>">
+							<?php echo e(Form::text('firstName', null, ['class' => 'form-control', 'placeholder' => 'Prénom*'])); ?>
+
+							<?php echo $errors->first('firstName', '<small class="help-block">:message</small>'); ?>
+
+						</div>
+						<div class="form-group <?php echo $errors->has('tel') ? 'has-error' : ''; ?>">
+							<?php echo e(Form::text('reference', 122222222, ['class' => 'form-control', 'placeholder' => 'Ref : '])); ?>
+
+							<?php echo $errors->first('reference', '<small class="help-block">:message</small>'); ?>
+
+						</div>
+					
+						<?php echo Form::submit('ENVOYER', ['class' => 'btn btn-default btn-block envoyer']); ?>
+
+					<?php echo Form::close(); ?>
+
+			</div>
+			
+	</div>
+	</div>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.gallerylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

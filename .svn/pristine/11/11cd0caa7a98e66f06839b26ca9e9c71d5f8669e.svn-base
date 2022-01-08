@@ -1,0 +1,189 @@
+<?php $__env->startSection('content'); ?>
+
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+<div class="row story">
+	<div class="col-xs-12 content">
+		<div class="box" style="background-position-x:<?php echo e($story->bg_position_x); ?>;background-position-y:<?php echo e($story->bg_position_y); ?>;background-image: url('<?php echo e(Config::get('custom.project_url')); ?>resources/pictures/<?php echo e($story->user()->token); ?>/<?php echo e($story->picture_path); ?>');">
+			<div class="fullname"> <?php echo e($story->user()->getFullname()); ?> </div>
+			<div class="like">
+				<ion-icon name="heart"></ion-icon>
+			</div>
+			<div class="likeCount">
+				<b><?php echo e(count($story->likes)); ?></b>
+			</div>
+			<div id="logo" style="position: absolute;bottom: 1vh;right: 1vh;">
+				<img style="height:5vh;" src="<?php echo e(Config::get('custom.project_url')); ?>resources/assets/img/logo_color.png" />
+			</div>
+		</div>
+		
+		<div class="infos">
+			<div class="text"> <?php echo e(ucfirst(Lang::get('admin.region'))); ?> : <?php echo $story->user()->region()->label; ?> </div>
+			<div class="text"> <?php echo e(ucfirst(Lang::get('admin.responsible'))); ?> : <?php echo $story->user()->responsible()->label; ?> </div>
+			<?php if(Auth::user()->token == 'twinadmin'): ?>
+				<div class="text" style="display:flex;padding-right:15px;height:100%;"> 
+					<div id="storyContent" style="flex-grow:1;height:100%;">
+						<div id="storyText" style="_display:none;">
+							<?php echo $story->getStory(); ?>
+
+						</div>
+						<div id="storyEdition" style="color:#000000;display:none;">
+							<textarea name="storyEdition" style="width:95%;height:auto;"><?php echo $story->getStory(); ?></textarea>
+						</div>
+					</div>
+					<div style="font-size:3vh;">
+						<div>
+							<div title="<?php echo e(mb_convert_case(Lang::get('admin.edit-story'), MB_CASE_TITLE, 'UTF-8')); ?>" id="editStory">
+								<ion-icon name="create"></ion-icon>
+							</div>
+							<div title="<?php echo e(mb_convert_case(Lang::get('admin.update-story'), MB_CASE_TITLE, 'UTF-8')); ?>" id="validStory" style="display:none;">
+								<ion-icon name="checkmark"></ion-icon>
+							</div>
+						</div>
+						<div>
+							<div title="<?php echo e(mb_convert_case(Lang::get('admin.disable-story'), MB_CASE_TITLE, 'UTF-8')); ?>" id="disableStory">
+								<ion-icon name="trash"></ion-icon>
+							</div>
+						</div>
+					</div>
+				</div>
+			<?php else: ?>
+				<div class="text" style="padding-right:15px;"> 
+					<?php echo $story->getStory(); ?>
+
+				</div>
+			<?php endif; ?>
+		</div>
+	</div>
+</div>
+
+<script>
+	var height = $('#storyContent').height();
+	$('textarea[name="storyEdition"]').height((height * 0.5));
+	
+	$(document).on('click', '#editStory', function(){
+		$("#storyText").hide();
+		$("#editStory").hide();
+		$("#storyEdition").show();
+		$("#validStory").show();
+	});
+	
+	$(document).on('click', '#validStory', function(){
+		$("#storyText").show();
+		$("#editStory").show();
+		$("#storyEdition").hide();
+		$("#validStory").hide();
+		
+		
+		
+		//
+		var story = $('textarea[name="storyEdition"]').val();
+		// alert(story);
+		editStory(userId, storyId, story);
+	});
+	
+	$(document).on('click', '#disableStory', function(){
+		var result = confirm('Désactiver la story ?');
+		if(result){
+			disableStory(userId, storyId);
+		}
+	});
+</script>
+
+<script>
+	// variables
+	var baseUrl = "<?php echo $baseUrl; ?>";
+	var userId = <?php echo $story->user()->id; ?>;
+	var storyId = <?php echo $story->id; ?>;
+	
+	// 
+	var editStory = function(userId, storyId, story){
+		var data = {
+			userId: userId,
+			storyId: storyId,
+			story: story
+		}
+		  
+		data = JSON.stringify(data);
+
+		$.ajaxSetup({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			}
+		});
+		
+		$.ajax({
+			type: "POST",
+			url: baseUrl + "/admin/editStory",
+			// url: "updateLike",
+			data: data,
+			contentType: 'application/json',
+			success: function(data) {
+				// on masque le popup d'ajout de nouveau support
+				if(data['status'].length > 0){
+					if(data['status'] == "success"){
+						// mise à jour du texte
+						$('#storyText').text(story);
+						alert(data['message']);
+					} else{
+						alert(data['message']);
+					}
+				}
+				
+				// alert("success");
+			},
+			error: function( data, status, err ) {
+				// alert(ucfirst(jsLang['label']['errorOccuredDuringLessonSupportSave']));
+				alert("Une erreur est survenue.");
+			},
+		});
+	}
+	
+	// 
+	var disableStory = function(userId, storyId){
+		var data = {
+			userId: userId,
+			storyId: storyId
+		}
+		  
+		data = JSON.stringify(data);
+
+		$.ajaxSetup({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			}
+		});
+		
+		$.ajax({
+			type: "POST",
+			url: baseUrl + "/admin/disableStory",
+			// url: "updateLike",
+			data: data,
+			contentType: 'application/json',
+			success: function(data) {
+				// on masque le popup d'ajout de nouveau support
+				if(data['status'].length > 0){
+					if(data['status'] == "success"){
+						// mise à jour du texte
+						alert(data['message']);
+					} else{
+						alert(data['message']);
+					}
+				}
+				
+				// alert("success");
+			},
+			error: function( data, status, err ) {
+				// alert(ucfirst(jsLang['label']['errorOccuredDuringLessonSupportSave']));
+				alert("Une erreur est survenue.");
+			},
+		});
+	}
+</script>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout.storylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

@@ -1,0 +1,15 @@
+<div class="box">
+<div></div>
+	<div class="fullname">
+		<?php echo e($story->user()->getFullname()); ?>
+
+	</div>
+	<?php /* <img src="<?php echo e(Config::get('custom.project_url')); ?>resources/pictures/<?php echo e($story->user()->token); ?>/<?php echo e($story->picture_path); ?>" /> */ ?>
+	<div class="like">
+		<?php if($story->hasLikeFromUser(Auth::user()->id)): ?>
+			<ion-icon name="heart"></ion-icon>
+		<?php else: ?>
+			<ion-icon name="heart-empty" onClick="like()"></ion-icon>
+		<?php endif; ?>
+	</div>
+</div>

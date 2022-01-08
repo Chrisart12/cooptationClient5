@@ -1,0 +1,28 @@
+@extends('admin.layout.gallerylayout')
+
+@section('content')
+
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+<div class="container">
+	<div class="listeCooptation row">
+		<div class="col-lg-4">COLLABORATEURS
+			@foreach($users as $user)
+				<div>{{ $user->lastname . ' ' . $user->firstname . ' ' . $user->id}}</div>
+			@endforeach
+
+		</div>
+		<div class="col-lg-4">NOMBRE DE CANDIDATS
+		</div>
+		<div class="col-lg-4">POINTS
+		</div>
+	</div>
+	
+</div>
+
+
+@stop

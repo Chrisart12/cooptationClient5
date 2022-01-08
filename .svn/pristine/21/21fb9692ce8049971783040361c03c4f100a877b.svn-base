@@ -1,0 +1,40 @@
+<<<<<<< .mine
+.btn-back{
+    width: 130px;
+    height: 40px;
+    font-size: 0.8em;
+    color: $backgroundColor;
+    background-color: $textColorBlackOne;
+    border-radius: $borderRadiux;
+    border: $textColorBlackOne;
+    // @include borderInput;
+    box-shadow: 1px 2px 2px #707070;
+   
+    &:hover {
+        background-color: white;
+        color: $textColorBlackOne;
+    }
+
+    @include BigSmartphonesPortrait{
+        margin-top: 30px;
+        width: 100px;
+        height: 35px;
+    }
+}||||||| .r0
+=======
+.btn-back{
+    width: 130px;
+    height: 40px;
+    font-size: 0.8em;
+    color: $backgroundColor;
+    background-color: $textColorBlackOne;
+    border-radius: $borderRadiux;
+    // border: solid $borderColor 2px;
+    @include borderInput;
+
+    @include BigSmartphonesPortrait{
+        margin-top: 30px;
+        width: 100px;
+        height: 35px;
+    }
+}>>>>>>> .r87

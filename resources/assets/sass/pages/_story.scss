@@ -1,0 +1,82 @@
+.story-container{
+    margin-top: 30px;
+    margin-bottom: 50px;
+
+    .story-container-image{
+        background-color: $titleColorRed;
+        width: 600px;
+        height: 920px;
+        padding-top: 25px;
+        margin: auto;
+        @include imageShadow;
+
+        @include BigSmartphonesPortrait{
+            width: 90vw;
+            height: 90vh;
+            margin: auto;
+        }
+    
+        .story-image{
+            width: 550px;
+            height: 670px;
+            // margin-top: 25px;
+            margin-left: 25px;
+            margin-right: 25px;
+            background-repeat: no-repeat;
+            background-size: cover;
+
+            @include BigSmartphonesPortrait{
+                width: 80vw;
+                height: 50vh;
+                margin: auto;
+            }
+
+            .story-name{
+                text-align: center;
+                color: $backgroundColor;
+                padding-top: 20px;
+                font-size: 1.5em;
+                @include textShadow;
+            }
+
+            .story-like-image{
+                background-repeat: no-repeat;
+                width: 90px;
+                height: 90px;
+                position: relative;
+                top: 500px;
+
+                @include BigSmartphonesPortrait{
+                    // width: 80rem;
+                    // height: 80fr;
+                    top: 25vh;
+                }
+
+                .story-like{
+                    position: relative;
+                    top: 35px;
+                    left: 43px;
+                    color: $backgroundColor;
+                    font-weight: 700;
+
+                }
+            }
+        }
+    
+        .story-infos{
+            margin-top: 25px;
+            margin-left: 25px;
+            margin-right: 25px;
+            color: $backgroundColor;
+    
+            .story-region,
+            .story-responsible{
+                font-weight: 700;
+            }
+    
+            .story-story{
+                margin-top: 5px;
+            }
+        }
+    }
+}

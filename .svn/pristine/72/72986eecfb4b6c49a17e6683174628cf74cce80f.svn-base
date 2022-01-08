@@ -1,0 +1,27 @@
+.job-description{
+    font-size: 1.4rem;
+    // font-size: 30px;
+}
+
+.job-info{
+    background-color: $backgroundColorTwo;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 20px;
+    border-radius: $borderRadiux;
+}
+
+.text-title{
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.job-info_label_bold{
+    font-weight: 700;
+    font-size: 1.1em;
+    color: $textColorBlackOne;
+}
+
+.job-info_label_margin-bottom{
+    margin-bottom: 10px;
+}

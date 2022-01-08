@@ -1,0 +1,37 @@
+@extends('layout.gallerylayout')
+
+@section('content')
+
+	<?php 
+
+		$baseUrl = App::make('url')->to('/');
+		
+	?>
+	<div class="scrollable">
+	<div class="row text-center" id="menu">
+		
+			<p class="texte">Veuillez renseigner les coordonées du candidat et cliquer sur Envoyer.</p>
+			<div  class="col-xs-offset-2 col-xs-8 formOffer">
+				{!! Form::open(['url' => 'offer']) !!}
+						<div class="form-group {!! $errors->has('lastName') ? 'has-error' : '' !!}">
+							{{-- {!! Form::label("nom", "Nom*", ['class' => 'control-label']) !!} --}}
+							{{ Form::text('lastName', null, ['class' => 'form-control', 'placeholder' => 'Nom*']) }}
+							{!! $errors->first('lastName', '<small class="help-block">:message</small>') !!}
+						</div>
+						<div class="form-group {!! $errors->has('firstName') ? 'has-error' : '' !!}">
+							{{ Form::text('firstName', null, ['class' => 'form-control', 'placeholder' => 'Prénom*']) }}
+							{!! $errors->first('firstName', '<small class="help-block">:message</small>') !!}
+						</div>
+						<div class="form-group {!! $errors->has('tel') ? 'has-error' : '' !!}">
+							{{ Form::text('reference', 122222222, ['class' => 'form-control', 'placeholder' => 'Ref : ']) }}
+							{!! $errors->first('reference', '<small class="help-block">:message</small>') !!}
+						</div>
+					
+						{!! Form::submit('ENVOYER', ['class' => 'btn btn-default btn-block envoyer']) !!}
+					{!! Form::close() !!}
+			</div>
+			
+	</div>
+	</div>
+
+@stop

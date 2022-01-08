@@ -1,0 +1,38 @@
+<<<<<<< .mine
+<?php
+
+return [
+    'jobs_url' => 'https://histoiredor.easycruit.com/export/xml/vacancy/list.xml',
+    'job_url' => 'https://histoiredor.easycruit.com/export/xml/vacancy/',
+    "pagination" => 20,
+    'back_url' => 'http://127.0.0.1:8000/',
+    'front_url' => 'http://localhost:3000/',
+    'picture_path' => 'C:\wamp64\www\CooptationData' . DIRECTORY_SEPARATOR 
+]; ||||||| .r71
+<?php
+
+	return array(
+	  'lang' => ['1' => 'fr', '2' => 'en'],
+	  'path_to_root' => '..',
+	  // 'project_realurl' => 'http://dev.obeinglish.com/',
+	  'project_url' => 'http://localhost/CooptationClient/',
+	  // 'project_path' => 'W:\MAMP\htdocs\Obeinglish',
+	  // 'resources_path' => 'W:\MAMP\htdocs\Obeinglish\resources\\',
+	  'project_name' => 'MaStory',
+	  'sender_mail' => 'tek@heliop.com',
+	  'sender_name' => 'THOM Europe',
+	  'gallery_mode' => '',
+	  'demo_stories' => ['story1', 'story2', 'story3'],
+	  'pagination' => 20
+	);
+=======
+<?php
+
+return [
+    'jobs_url' => 'https://histoiredor.easycruit.com/export/xml/vacancy/list.xml',
+    'job_url' => 'https://histoiredor.easycruit.com/export/xml/vacancy/',
+    "pagination" => 20,
+    'back_url' => 'http://127.0.0.1:8000/',
+    'front_url' => 'http://localhost:3000/'
+    
+];>>>>>>> .r87

@@ -1,0 +1,36 @@
+<?php $__env->startSection('content'); ?>
+
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+<div class=" pages">
+	<table class="container">
+
+		<a href="javascript:history.back()"><button class="voir"><img src="<?php echo e(asset('public/icons/back1.png')); ?>">RETOUR</button></a>
+
+		<div class="listeCooptation row ">
+			<tr>
+				<th class="col-lg-3 col-sm-3 col-xs-3 designation">ADMINISTRATEURS</th>
+				<th class="col-lg-3 col-sm-3 col-xs-3 designation">CANDIDATS</th>
+				<th class="col-lg-3 col-sm-3 col-xs-3 designation">ETAPES</th>
+				<th class="col-lg-3 col-sm-3 col-xs-3 designation">DATE</th>
+			</tr>
+		</div>
+
+		<?php /* <?php foreach( $cooptants as  $cooptant): ?>
+			<tr>
+				<td class="col-lg-3 col-sm-3 col-xs-3 cooptants"><?php echo e(strtoupper($cooptant->admin_lastname) . ' ' .  $cooptant->admin_firstname); ?> </td>	
+				<td class="col-lg-3 col-sm-3 col-xs-3 cooptants"><?php echo e($cooptant->lastname . ' ' . $cooptant->firstname); ?></td>
+				<td class="col-lg-3 col-sm-3 col-xs-3 cooptants"><?php echo e($cooptant->label); ?></td>		
+				<td class="col-lg-3 col-sm-3 col-xs-3 cooptants"><?php echo e($cooptant->created_at); ?> </td>	
+			
+			</tr>	
+		<?php endforeach; ?> */ ?>
+	</table>
+</div>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout.gallerylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Http\Requests;
+use App\Http\Requests\CandidatsRequest;
+use App\Candidat;
+use App\User;
+
+class OfferController extends Controller
+{
+    public function showFormOffer()
+    {
+    	return view('offer');
+    }
+
+    public function postFormOffer(CandidatsRequest $request)
+    {
+		//Insertion des candidats dans la base de données.
+		// $user = new User;
+		$candidat = new Candidat;
+		$candidat->lastName = $request->input('lastName');
+		$candidat->firstName = $request->input('firstName');
+		$candidat->reference = $request->input('reference');
+		$candidat->save();
+		// $candidat = Candidat::create($request->all());
+
+    	return view('confirmOffer');
+    }
+
+}

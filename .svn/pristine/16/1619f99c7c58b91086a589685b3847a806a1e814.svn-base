@@ -1,0 +1,69 @@
+
+
+(function(){
+
+	$('form[data-remote]').on('submit', function(e) {
+		e.preventDefault();
+
+		var form = $(this);
+		var method = form.prop('method');
+		var url = form.prop('action');
+// 		var candidatId = $(firstRdv).val();
+// var buton = $('.etapes');
+// console.log(buton);
+
+
+	// Taitement du formulaire par ajax et envoi d'un méssage.
+		$.ajax({
+			type: method,
+			data: form.serialize(),
+			url: url,
+
+			success: function() {
+				var message = form.data('remote-success-message');
+				if(message){
+					$('.flash').html(message).fadeIn(300).delay(3000).fadeOut(300);
+					location.reload();
+				}
+			}
+		});
+
+
+
+		// if(candidatId == $(firstRdv).val()){
+		// 	console.log('étape passée');
+		// } else {
+		// 	console.log('pas encore');
+		// }
+		
+	});
+
+
+// //récupération de la valeur du 1er rendez-vous
+// var candidatId = $(firstRdv).val();
+// //Condition pour que le bouton soit vert et désactivé
+// if(candidatId) {
+// 	// changement de la couleur des boutons après les click
+
+// function changeStyle(element, backgroundColor, textColor){
+// 			element.style.backgroundColor = backgroundColor;
+// 			element.style.color = textColor; 
+// 		}
+
+// $(function(){
+//  	$('button[data-background-color]').on('click', function(){
+
+//  		var buton = $(this);
+//  		var backgroundColor = $(this).data('background-color');
+//  		var textColor = $(this).data('text-color');
+//  		changeStyle(this, backgroundColor, textColor);
+
+//  		//ésactivation du bouton après le click
+//  		buton.prop('disabled', 'disabled');
+//  	});
+// });
+
+// }
+
+
+})();

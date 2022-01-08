@@ -1,0 +1,27 @@
+.cooptation_info_table {
+    border-collapse: collapse;
+    border-radius: 1em;
+    overflow: hidden;
+    width: 100%;
+
+    .cooptation_th {
+        padding: 1em;
+        background-color: $titleColorRed;
+        color: $backgroundColor;
+        border-bottom: 3px solid $backgroundColor;
+        font-weight: 500;
+    }
+
+    .cooptation_td {
+        padding: 1em;
+        background-color: $backgroundColorTwo;
+        border-bottom: 3px solid $backgroundColor;
+    }
+
+    .cooptation_td_black{
+        color: $textColorBlackOne;
+        font-weight: 600;
+    }
+    
+}
+

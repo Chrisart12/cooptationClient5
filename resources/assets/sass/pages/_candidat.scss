@@ -1,0 +1,60 @@
+.candidat-detail_flex{
+    display: flex;
+    flex: 1;
+
+    @include BigSmartphonesPortrait{
+        display: block;
+    }
+
+}
+
+.canditate-validate-and-date_flex{
+    display: flex;
+    flex: 2;
+    justify-content: space-around;
+
+    // @include BigSmartphonesPortrait{
+    //    justify-content: space-around;
+    // }
+
+}
+
+.canditat-date-validation{
+    margin-bottom: 10px;
+    background-color: $backgroundColorTwo;
+    // padding: 1px;
+    border-radius: $borderRadiux;
+    // padding-top: 2px;
+    height: 40px;
+    // padding-bottom: 1px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.candidat-container-etape{
+    display: flex;
+}
+
+.candidat-container-etape-hidden{
+    visibility: hidden;
+}
+
+.candidat-job-info{
+    background-color: $backgroundColorTwo;
+    padding: 20px;
+    border-radius: $borderRadiux;
+
+    .candidat-job-info_detail{
+        color: $textColorBlackOne;
+    }
+}
+
+.candidat-label{
+    color: $textColorBlackOne;
+    font-weight: 700;
+}
+
+// .color-etape
+// {
+// 	background-color: #69f0ae;
+// }

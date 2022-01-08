@@ -1,0 +1,27 @@
+<?php $__env->startSection('content'); ?>
+
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+<div class="container">
+	<div class="listeCooptation row">
+		<div class="col-lg-4">COLLABORATEURS
+			<?php foreach($users as $user): ?>
+				<div><?php echo e($user->lastname . ' ' . $user->firstname . ' ' . $user->id); ?></div>
+			<?php endforeach; ?>
+
+		</div>
+		<div class="col-lg-4">NOMBRE DE CANDIDATS
+		</div>
+		<div class="col-lg-4">POINTS
+		</div>
+	</div>
+	
+</div>
+
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout.gallerylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

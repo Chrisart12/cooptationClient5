@@ -1,0 +1,15 @@
+.btn-etape-disabled{
+    width: 230px;
+    height: 40px;
+    font-size: 0.8em;
+    color: $backgroundColor;
+    background-color: $textColorBlackTwo;
+    border-radius: $borderRadiux;
+    margin-bottom: 10px;
+    @include borderInput;
+
+    @include BigSmartphonesPortrait{
+        width: 150px;
+        height: 40px;
+    }
+}

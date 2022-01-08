@@ -1,0 +1,101 @@
+<?php $__env->startSection('content'); ?>
+
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+<div class="row login">
+	<div class="col-xs-12 content">
+		<div class="row">
+			<div class="col-xs-12"> 
+				<?php echo e(Form::open(array('route' => ['login']))); ?>
+
+					<input type="hidden" name="_Token" value="<?php echo e(csrf_token()); ?>">
+					<div class="row">
+						<div class="col-xs-12"> 
+							<h2 class="logo"> 
+								<img id="logo" src="<?php echo e(Config::get('custom.project_url')); ?>resources/assets/img/logo_color.png" />
+							</h2>
+						</div>
+					</div>
+					
+					<hr class="noBorder" />
+					
+					<div class="row">
+						<div class="col-xs-12"> 
+							<?php echo e(Form::input('text', 'token', '', ['class' => 'formInput', 'placeholder' => ucfirst(Lang::get('label.collaborator-token'))])); ?>
+
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12"> 
+							<?php echo e(Form::input('password', 'password', '', ['class' => 'formInput', 'placeholder' => ucfirst(Lang::get('label.password'))])); ?> 
+						</div>
+					</div>
+					
+					<hr class="noBorder" />
+					
+					<!-- <div class="row">
+						<div class="col-xs-12"> 
+							<span class="title"> 
+								<?php echo ucfirst(Lang::get('label.good-story-to-tell')); ?> 
+							</span>
+						</div>
+					</div> -->
+					
+					<hr class="noBorder" />
+					
+					<div class="row">
+						<div class="col-xs-12"> 
+							<?php echo e(Form::submit(strtoupper(Lang::get('label.signin')), ['class' => 'button'])); ?> 
+						</div>
+					</div>
+				<?php echo e(Form::close()); ?>
+
+					
+				<hr class="noBorder" />
+				
+				
+				<div class="row">
+					<div class="col-xs-12"> 	
+						<?php echo e(Html::link(url('/signup'), ucfirst(Lang::get('label.create-password')), array('class' => 'link'), true)); ?>
+
+					</div>
+					<!-- <div class="col-xs-12">
+						<?php echo e(ucfirst(Lang::get('label.alreadyAccount'))." ?"); ?>
+
+					</div> -->
+				</div>
+					
+				<hr class="noBorder" />
+				
+		
+				<div style="position:fixed; bottom:0; left:0; width:100%;"> 
+					<span class="title"> 
+						<?php echo ucfirst(Lang::get('label.good-story-to-tell')); ?> 
+					</span>
+				</div>
+					
+				<?php if($errors->any()): ?>
+					<div class="alert alert-danger" role="alert">
+						<?php foreach($errors->all() as $error): ?>
+							<?php echo e($error); ?>
+
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
+				<?php if(Session::has('message')): ?>
+					<div class="alert alert-info">
+						<?php echo e(Session::get('message')); ?>
+
+					</div>
+				<?php endif; ?>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.loginlayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

@@ -1,0 +1,69 @@
+<nav class="navbar footer navbar-expand-lg navbar-light bg-light">
+	<?php if(in_array($layout, ['mystory'])): ?>
+		<!-- <div class="container">
+			<div class="row pictures">
+				<div class="col-xs-6 picture"> 
+					<a class="link" href="<?php echo e($baseUrl); ?>/gallery">
+						<?php echo e(strtoupper(Lang::get('label.gallery'))); ?>
+
+					</a>
+				</div>
+				<div class="col-xs-6 picture"> 
+					<a class="link" href="<?php echo e($baseUrl); ?>/mystory">
+						<?php echo e(strtoupper(Lang::get('label.picture'))); ?>
+
+					</a>
+				</div>
+			</div>
+		</div> -->
+		<div class="container">
+			<div class="pictures">
+				<div class="picture gallery" onClick="function(){ console.log('gallery') }"> 
+					<?php echo e(strtoupper(Lang::get('label.gallery'))); ?>
+
+				</div>
+				<div class="picture camera" onClick="function(){ console.log('camera') }"> 
+					<?php echo e(strtoupper(Lang::get('label.picture'))); ?>
+
+				</div>
+			</div>
+		</div>
+	<?php elseif(in_array($layout, ['mystoryvalidation'])): ?>
+		<div class="container">
+			<div class="mystory">
+				<div class="validation" onClick="return true;"> 
+					<?php echo e(strtoupper(Lang::get('label.my-story-validation'))); ?>
+
+				</div>
+			</div>
+		</div>
+	<?php else: ?>
+		<div class="container">
+			<div class="row menus">
+				<div class="col-xs-4 menu <?php if($layout == "gallery"){ echo "active"; } ?>"> 
+					<a class="link" href="<?php echo e($baseUrl); ?>/gallery">
+						<ion-icon name="home"></ion-icon>
+					</a>
+				</div>
+				<?php if(Auth::user()->story->is_done): ?>
+					<div class="col-xs-4 menu <?php if($layout == "mystorydone"){ echo "active"; } ?>"> 
+						<a class="link" href="<?php echo e($baseUrl); ?>/mystorydone">
+							<ion-icon name="contact"></ion-icon>
+						</a>
+					</div>
+				<?php else: ?>
+					<div class="col-xs-4 menu <?php if(in_array($layout, ["mystory", "mystorycontent"])){ echo "active"; } ?>"> 
+						<a class="link" href="<?php echo e($baseUrl); ?>/mystory">
+							<ion-icon name="camera"></ion-icon>
+						</a>
+					</div>
+				<?php endif; ?>
+				<div class="col-xs-4 menu <?php if($layout == "favorite"){ echo "active"; } ?>"> 
+					<a class="link" href="<?php echo e($baseUrl); ?>/favorite">
+						<ion-icon name="heart"></ion-icon>
+					</a>
+				</div>
+			</div>
+		</div>
+	<?php endif; ?>
+</nav>

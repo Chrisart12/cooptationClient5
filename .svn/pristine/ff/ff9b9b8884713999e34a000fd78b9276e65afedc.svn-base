@@ -1,0 +1,107 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use DB;
+use Auth;
+use App\Offre;
+use Illuminate\Http\Request;
+use App\Http\Requests\OffresRequest;
+
+use App\Http\Requests;
+
+class OffresController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //Affichage de tous les offres de la table offre
+        $offres = Offre::select('offres.id', 'offres.lieu', 'offres.reference', 'offres.categorie', 'offres.poste', 'offres.description', 'offres.updated_at')
+                            ->get();
+                             //dd($offres);
+
+         return view('admin.offres', compact('offres'));
+
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+       
+         return view('admin.publishOffre');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+       //Insertion des offres dans la table offres
+       $offre = new Offre;
+       $offre->lieu = $request->input('lieu');
+       $offre->reference = $request->input('reference');
+       $offre->poste = $request->input('poste');
+       $offre->description = $request->input('description');
+       $offre->user_id = Auth::user()->id;
+       $offre->save();
+
+       return view('admin.confirmPublish', compact('offre'));
+     
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+}

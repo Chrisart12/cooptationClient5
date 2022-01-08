@@ -1,0 +1,90 @@
+<?php $__env->startSection('content'); ?>
+	<?php echo $__env->make('admin.partials.flash', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+	<div class="container pages ">
+
+		<a href="javascript:history.back()"><button class="voir"><img src="<?php echo e(asset('public/icons/back1.png')); ?>">RETOUR</button></a>
+
+		<div class="alignement listeCooptation">
+			 <div>
+			 	<div><span class="designation">CANDIDAT</span></div>
+				<br>
+				<br>
+				<div>
+					<p class="cooptants"><?php echo e(strtoupper($candidat->lastname) . ' ' . $candidat->firstname); ?></p>
+					<p class="cooptants">Référence : <?php echo e($candidat->reference); ?> </p>
+					<p class="cooptants">Date de candidature : <?php echo e(date('d-m-Y', strtotime( $candidat->date_de_creation ))); ?> </p>
+				</div>
+				<br>
+				<br>
+
+				<?php if($candidat->step_number < 9): ?>
+					<div>
+						<p class="text_valider">Pour valider l'étape <span class="step" ><?php echo e($candidat->label); ?></span>, cliquez</p>
+					</div>
+				<?php else: ?>
+				    <div>
+						<p class="text_valider">Fin des étapes</p>
+					</div>
+				<?php endif; ?>
+				
+				
+				<form method="POST" action="<?php echo e('etapes' . '/' . $candidat->step_id); ?>" data-remote data-remote-success-message="L'étape <?php echo e($candidat->label); ?> est passée." >
+						<?php echo e(csrf_field()); ?>
+
+
+						<input type="hidden" name="id" id="firstRdv" value="<?php echo e($candidat->candidat_id); ?>">
+						<button type="submit" class="valider_etape">VALIDER</button>
+						
+				</form>
+			</div>
+		
+			<div>
+				<div ><span class="designation ">ETAPES</span></div>
+				<br>
+				<br>
+				<?php /* <?php if($candidat->step_number < 9): ?>
+					<div>
+						<p class="etapes text-center "><?php echo e($candidat->label); ?></p>
+					</div>
+				<?php else: ?>
+				    <div>
+						<p class="etapes text-center fin_etape"><?php echo e($candidat->label); ?></p>
+					</div>
+				<?php endif; ?> */ ?>
+				
+				<?php $__empty_1 = true; foreach($stepCandidats as $stepCandidat): $__empty_1 = false; ?>
+					<div>
+						<p class="etapes historics text-center "><?php echo e($stepCandidat->label); ?></p>
+					</div>
+				<?php endforeach; if ($__empty_1): ?>
+					<div>
+						<p class="cooptants">L'utilisateur n'a passé aucune étape pour l'instant.</p>
+					</div>
+				<?php endif; ?>
+			</div>
+
+			<div>
+				<div><span class="designation">DATES</span></div>
+				<br>
+				<br>
+
+				<?php /* <div>
+					<p class=" date "><?php echo e(date('d-m-Y', strtotime( $candidat->date_etape ))); ?></p>
+				</div> */ ?>
+				<?php foreach($stepCandidats as $stepCandidat): ?>
+					<div>
+						<p class="date"><?php echo e(date('d-m-Y H:i:s', strtotime( $stepCandidat->created_at ))); ?></p>
+					</div>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</div>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout.gallerylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

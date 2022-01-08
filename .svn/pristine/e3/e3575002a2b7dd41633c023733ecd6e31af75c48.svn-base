@@ -1,0 +1,167 @@
+#menu, .confirmOffer
+{
+	margin-top: 60px;
+}
+
+.menu
+{
+	margin-top: 30px;
+	font-size: 25px;
+}
+
+.texte
+{
+	font-size: 18px;
+	margin-left: 20px;
+	margin-right: 10px;
+}
+
+.envoyer
+{
+	background-color: black;
+	color: white;
+}
+
+.formOffer
+{
+	margin-top: 60px;
+}
+
+/*-------- ADMIN -----*/
+.cooptation
+{
+	position: relative;
+	background-color: #000000;
+	color: white;
+	padding: 10px;
+	border: black;
+	/*left: 500px;*/
+}
+
+.cooptation:hover
+{
+	background-color: #FFFFFF;
+	color: #443737;
+	box-shadow: 2px 1px 4px;
+}
+
+
+.pages
+{
+	margin-top: 90px;
+}
+
+.retour
+{
+	width: 105px;
+	height: 35px;
+	color: #000000 ;
+}
+
+.retour:hover
+{
+	color: #443737;
+	box-shadow: 2px 1px 4px;
+}
+
+.listeCooptation
+{
+	margin-top: 40px;
+}
+
+.cooptants
+{
+	color: white;
+	font-size: 16px;
+}
+
+
+.designation
+{
+	color: white;
+	font-weight: bold;
+	font-size: 18px;
+}
+
+
+.voir
+{
+	width: 105px;
+	height: 35px;
+	background-color: #FFFFFF;
+	color: #443737;
+}
+
+.voir:hover
+{
+	box-shadow: 2px 1px 4px;
+	background-color: #bbdefb;
+}
+
+.etapes
+{
+	width: 290px;
+	height: 40px;
+	background-color: #FFFFFF;
+	color:  #000000;
+	padding-top: 5px;
+	font-size: 20px;
+
+}
+
+.etape
+{
+	width: 140px;
+	margin-right: 10px;
+	height: 40px;
+	background-color: #FFFFFF;
+	color: #443737;
+}
+
+.dates
+{
+	width: 290px;
+	height: 40px;
+}
+
+/* Message pour la cooptation */
+.flash
+{
+	/*position: absolute;*/
+	top: 100px;
+	width: 300px;
+	z-index: 10000;
+	background-color: #000000;
+} 
+
+.text_valider
+{
+	color: #FFFFFF;
+	font-style: italic;
+}
+
+.valider_etape
+{
+	background-color: #000000;
+	color: white;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	width: 105px;
+	height: 35px;
+	border: black;
+}
+
+.valider_etape:hover
+{
+	background-color: #FFFFFF;
+	color: #443737;
+	box-shadow: 2px 1px 4px;
+}
+
+td
+{
+	border-bottom: 1px solid #EF5350;
+	border-top: 1px solid #EF5350;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}

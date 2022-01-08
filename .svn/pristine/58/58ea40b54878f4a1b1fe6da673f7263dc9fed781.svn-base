@@ -1,0 +1,47 @@
+<?php $__env->startSection('content'); ?>
+
+	<?php 
+
+		$baseUrl = App::make('url')->to('/');
+		
+	?>
+	<div class="scrollable pages_user_cooptation">
+		<a href="javascript:history.back()"><button class="voir"><img src="<?php echo e(asset('public/icons/back1.png')); ?>">RETOUR</button></a>
+	<div class="row text-center" id="menu">
+			<p class="texte">Vous êtes sur le point de proposer un postulant pour le poste de : <a href="<?php echo e(url('offre' . '/' .  $offre->id )); ?>"><?php echo e(strtolower($offre->poste)); ?></a>.</p>
+			<p class="texte">Veuillez renseigner les coordonées du candidat et cliquer sur envoyer.</p>
+
+			<div  class="col-xs-offset-2 col-xs-8 formOffer">
+				<?php /* ['route' => ['admin.offres.update', $offre->id] */ ?>
+				<?php echo Form::open(['route' => ['offer', $offre->id] ]); ?>
+
+						<div class="form-group <?php echo $errors->has('lastName') ? 'has-error' : ''; ?>">
+							<?php echo e(Form::text('lastName', null, ['class' => 'form-control', 'placeholder' => 'Nom*'])); ?>
+
+							<?php echo $errors->first('lastName', '<small class="help-block">:message</small>'); ?>
+
+						</div>
+						<div class="form-group <?php echo $errors->has('firstName') ? 'has-error' : ''; ?>">
+							<?php echo e(Form::text('firstName', null, ['class' => 'form-control', 'placeholder' => 'Prénom*'])); ?>
+
+							<?php echo $errors->first('firstName', '<small class="help-block">:message</small>'); ?>
+
+						</div>
+						<div class="form-group <?php echo $errors->has('tel') ? 'has-error' : ''; ?>">
+							<?php echo e(Form::text('reference', 'Réf : ' . $offre->reference, ['class' => 'form-control', 'readonly'])); ?>
+
+							<?php echo $errors->first('reference', '<small class="help-block">:message</small>'); ?>
+
+						</div>
+					
+						<?php echo Form::submit('ENVOYER', ['class' => 'btn btn-default btn-block envoyer']); ?>
+
+					<?php echo Form::close(); ?>
+
+			</div>
+			
+	</div>
+	</div>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.gallerylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

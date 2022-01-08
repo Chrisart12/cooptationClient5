@@ -1,0 +1,44 @@
+<nav class="navbar header navbar-expand-lg navbar-light bg-light">
+	<?php if(in_array($layout, ['story'])): ?>
+		<span class="back">
+			<a class="link" href="<?php echo e($baseUrl); ?>/<?php echo e($from); ?>">
+				<ion-icon name="arrow-round-back"></ion-icon>
+			</a>
+		</span>
+	<?php elseif(in_array($layout, ['cgu', 'mystory'])): ?>
+		<span class="back">
+			<a class="link" href="<?php echo e($baseUrl); ?>/gallery">
+				<ion-icon name="arrow-round-back"></ion-icon>
+			</a>
+		</span>
+	<?php elseif(in_array($layout, ['mystorycontent'])): ?>
+		<span class="back">
+			<a class="link" href="<?php echo e($baseUrl); ?>/mystory">
+				<ion-icon name="arrow-round-back"></ion-icon>
+			</a>
+		</span>
+	<?php elseif(in_array($layout, ['mystoryvalidation'])): ?>
+		<span class="back">
+			<a class="link" href="<?php echo e($baseUrl); ?>/mystorycontent">
+				<ion-icon name="arrow-round-back"></ion-icon>
+			</a>
+		</span>
+	<?php endif; ?>
+	
+	<span class="title"> <?php echo $title; ?> </span>
+	
+	<?php if(in_array($layout, ['gallery', 'favorite', 'mystorydone'])): ?>
+		<span class="cgu">
+			<a class="link" href="cgu">
+				<ion-icon name="information-circle"></ion-icon>
+			</a>
+		</span>
+	<?php endif; ?>
+	<?php if(in_array($layout, ['mystory', 'mystorydone', 'mystorycontent'])): ?>
+		<span class="confirm">
+			<a class="link" href="#">
+				<ion-icon name="checkmark"></ion-icon>
+			</a>
+		</span>
+	<?php endif; ?>
+</nav>

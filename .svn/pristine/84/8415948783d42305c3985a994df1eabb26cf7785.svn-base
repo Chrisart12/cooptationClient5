@@ -1,0 +1,31 @@
+<?php $__env->startSection('content'); ?>
+
+	<?php 
+
+		$baseUrl = App::make('url')->to('/');
+		
+	?>
+	<div class="scrollable">
+	<div class="row  text-center" id="menu">
+		
+			<div class="menu">
+			
+				<a href="<?php echo e(url('gallery')); ?>">
+					GALERIE
+				</a>
+			</div>
+			<div class="menu">
+				<a href="<?php echo e(url('cgu')); ?>">CGU</a>	
+			</div>
+				
+			<div class="menu">
+				<?php /* <a href="<?php echo e(url('offer')); ?>">OFFRES</a> */ ?>
+				
+				<a href="<?php echo e(url('offres')); ?>">OFFRES</a>
+			</div>
+			
+	</div>
+	</div>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.gallerylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

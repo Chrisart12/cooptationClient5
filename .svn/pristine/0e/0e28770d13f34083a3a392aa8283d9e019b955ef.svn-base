@@ -1,0 +1,875 @@
+<<<<<<< .mine
+<?php
+
+namespace App\Http\Controllers;
+
+use DB;
+use Auth;
+use DateTime;
+use App\Model\Job;
+use App\Model\Step;
+use App\Model\User;
+use App\Model\Account;
+use App\Model\Candidat;
+use App\Model\Historic;
+use App\Model\Categorie;
+use App\Model\CategorieStep;
+use Illuminate\Http\Request; 
+use App\Mail\MessageToCandidat;
+use App\Mail\MessageToCooptant;
+use App\Repositories\JobInterface;
+use App\Exceptions\CustomException;
+use App\Repositories\StepInterface;
+use App\Repositories\UserInterface;
+use Illuminate\Support\Facades\Mail;
+use App\Repositories\AccountInterface;
+use Illuminate\Support\Facades\Config;
+use App\Repositories\CandidatInterface;
+use App\Repositories\HistoricInterface;
+use App\Http\Requests\CooptationRequest;
+
+
+class CooptationController extends Controller
+{
+    
+    protected $candidatInterface;
+    protected $jobInterface;
+    protected $accountInterface;
+    protected $userInterface;
+    protected $stepInterface;
+    protected $historicInterface;
+
+    /**
+     * Ce controlleur nécessite une authentification
+     *
+     * @return void
+     */
+    public function __construct(CandidatInterface $candidatInterface,
+                                JobInterface $jobInterface, AccountInterface $accountInterface, UserInterface $userInterface,
+                                StepInterface $stepInterface, HistoricInterface $historicInterface)
+    {
+        $this->middleware('auth')->except('coopter');
+        $this->candidatInterface = $candidatInterface;
+        $this->jobInterface = $jobInterface;
+        $this->accountInterface = $accountInterface;
+        $this->userInterface = $userInterface;
+        $this->stepInterface = $stepInterface;
+        $this->historicInterface = $historicInterface;
+    }
+    
+    /**
+     * Retourne tous les candidats de la base de données
+     *
+     * @return [CandidatInterface] $candidatInterface
+     */
+    public function index()
+    {
+        
+        $cooptations = $this->candidatInterface->getAll();
+
+        return view('cooptation', compact('cooptations'));
+
+    }
+
+    /**
+     * Fonction qui permet d'enregistrer la candidature et d'envoyer
+     * un email au canditat avec un lien pour postuler.
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function coopter(CooptationRequest $request)
+    {
+    
+        //On utilise une transaction pour mettre à jour les tables
+        DB::beginTransaction();
+
+        try {
+                //On enregistre les informations dans la table jobs
+                $job = $this->jobInterface->create($request);
+
+                //On enregistre les informations dans la table candidats
+                $candidat = $this->candidatInterface->create($job->id, $request);
+
+                //On enregistre les informations dans la table accounts
+                $account = $this->accountInterface->create($request->input('userId'), $candidat->id, $job->id, 1);
+
+                //On recherche les informations sur l'utilisateur qui a envoyé le candidat
+                $user = $this->userInterface->getUserById($request->input('userId'));
+                
+                //On envoie un mail au candidat
+                $this->sendMailToCandidat($candidat, $user, $job);
+
+                //On envoie un mail au cooptant
+                $this->sendMailToCooptant($candidat, $user, $job);
+
+                DB::commit();
+
+            } catch (\Throwable $th) {
+
+                DB::rollback();
+            }
+        
+            return response()->json([
+                'cooptation' => $request->input('location'),
+            ]);
+
+    }
+
+    /**
+     * @param mixed $candidat
+     * @param mixed $user
+     * @param mixed $job
+     * 
+     * @return [type]
+     */
+    private function sendMailToCandidat($candidat, $user, $job)
+    {
+        $candidatLastname = $candidat->lastname;
+        $candidatFirstname = $candidat->firstname;
+        $jobTitle = $job->title;
+        $userFirstname = $user->firstname; 
+        $userLastname = $user->lastname;
+        $jobUrl = $job->url;
+        //On crée une instance de MessageToCandidat
+        $messageToCandidat = new MessageToCandidat($candidatLastname, $candidatFirstname, $jobTitle, $userFirstname, $userLastname, $jobUrl);
+
+        //On envoie un message au candidat.
+        Mail::to($candidat->email)
+            ->send($messageToCandidat);
+    }
+
+    /**
+     * @param mixed $candidat
+     * @param mixed $user
+     * @param mixed $job
+     * 
+     * @return [type]
+     */
+    private function sendMailToCooptant($candidat, $user, $job)
+    {
+        $candidatLastname = $candidat->lastname;
+        $candidatFirstname = $candidat->firstname;
+        $jobTitle = $job->title;
+        $userFirstname = $user->firstname; 
+        $userLastname = $user->lastname;
+
+        //On crée une instance de MessageToCooptant.
+        $messageToCooptant = new MessageToCooptant($candidatLastname, $candidatFirstname, $jobTitle, $userFirstname, $userLastname);  
+        
+        // On envoie une confirmation au cooptant.
+        Mail::to($user->email)
+            ->send($messageToCooptant);
+    }
+
+    /**
+     * Retourne tous les cooptants
+     * avec chacun le nombre de candidats proposé, 
+     * ainsi que chacun leur point
+     *
+     * @return [UserInterface] $cooptants
+     */
+    public function cooptants()
+    {
+        
+        $cooptants = $this->userInterface->getCooptants();
+
+        return view('cooptants', compact('cooptants'));
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param [User] $id
+     * @return [UserInterface] $userInterface
+     */
+    public function cooptant($id)
+    {
+  
+        $id = (int)$id;
+        
+        // On vérifie d'abord si l'id existe en base de données.
+        $user = $this->userInterface->getUserById($id);
+    
+        if($user){
+        
+            $cooptant = $this->userInterface->getUserById($id);
+            
+            $coopters = $this->candidatInterface->getCooptersByCooptantId($id);
+    
+            return view('cooptant', compact('coopters', 'cooptant'));
+
+        } else {
+
+            throw new CustomException;
+        }
+    
+    }
+
+    /**
+     * @param mixed $id
+     * 
+     * @return [CandidatInterface] $candidatInterface
+     */
+    public function candidat($candidatId)
+    {
+
+        $candidatId = (int)$candidatId;
+
+        if($candidatId) {
+
+            $candidat = $this->candidatInterface->getCandidat($candidatId);
+
+            // return  $candidat;
+            // Recherche des étapes en fonction de la catégorie
+            //On récupére la catégorie de la précédente requête
+            $categorieId = $candidat->categorie_id;
+        
+            // permet de connaître toute les étapes de la catégorie
+            $etapes = $this->stepInterface->getEtapes($categorieId);
+        
+            //Recherche de l'étape du candidat dans la table accounts
+            // en prenant en compte la catégorie
+            // On retient l'id du candidat
+            $candidat_id = $candidat->candidat_id;
+            
+            // Je change la ligne suivante pour connaître l'étape courante en faisant la recherche dans la table candidat
+            $currentStep = $this->accountInterface->getCurrentStep($candidat_id, $categorieId);
+            // $currentStep = $this->candidatInterface->getCurrentStep($candidat_id, $categorieId);
+    
+            // permet de connaître le nombre total de steps
+            $totalSteps = $this->stepInterface->getTotalSteps($categorieId);
+        
+            $historicStepCandidats = $this->historicInterface->getHistoricStepCandidats($candidat_id);
+        
+        }
+                                                        // 'step',
+        return view('candidat', compact('candidat', 'etapes',  'currentStep', 'totalSteps', 'historicStepCandidats'));
+    }
+
+	/**
+	 * @param CooptationRequest $request
+	 * 
+	 * @return [candidatInterface] $candidatInterface
+     * 
+     * @return redirect CooptationController@candidat
+	 */
+	public function etapes(CooptationRequest $request)
+    {
+        
+        $candidatId = $request->input('id');
+        $categorieId = $request->input('categorie_id');
+
+        //Cette fonction permet de rechercher le candidat par son $id
+        // il est utilisée aussi bien pour function candidat($candidatId) get
+        // et pour function etapes(CooptationRequest $request) post
+        $candidat = $this->candidatInterface->getCandidat($candidatId);
+        
+        //On recherche l'ordre selon la catégorie et le step_id
+        //On retient le step_id
+        $stepCandidat =  $candidat->step_id;
+        
+        $ordre = $this->stepInterface->getOrdre($stepCandidat, $categorieId);
+        
+        // Sélection de toutes les étapes du candidat dans la table historics 
+        $historicStepCandidats = $this->historicInterface->getHistoricStepCandidats($candidatId);
+
+        //Récupération des données du candidat					
+        $score = $candidat->score;
+        $stepNote = $candidat->note;
+
+        //Récupération des données du cooptant
+        $userId = $candidat->user_id;
+        
+        //Récupération des données de l'admin qui est connecté	                                   
+        $adminId = Auth::id();
+        $adminFirstname = Auth::user()->firstname;
+        $adminLastname = Auth::user()->lastname;
+    
+        //MISE A JOUR DES DONNEES DANS LA TABLE ACCOUNT
+        //Récupération du nombre total d'étapes dans la catégorie
+        //On compte le nombre total d'étapes selon la catégorie
+        $totalSteps = $this->stepInterface->getTotalSteps($categorieId);
+        
+        //Récupération de l'ordre sur la page étape
+        $ordres = $this->stepInterface->getOrdres($categorieId);
+        
+
+        $this->historicInterface->createEtapes($userId, $candidatId, $stepCandidat, $adminId, $totalSteps, 
+                                                $adminLastname, $adminFirstname, $ordre, $ordres, $score, $stepNote);
+        
+        // On fait une redirection pour actualiser la page en passant l'action
+        // du controller  candidat en deuxième argument l'id du candidat
+		return redirect()->action('CooptationController@candidat', ['id'=> $candidatId]);
+    }
+}
+||||||| .r77
+<?php
+
+namespace App\Http\Controllers;
+
+use DB;
+use Auth;
+use Datetime;
+use Lang;
+use Redirect;
+use Response;
+use App\Http\Requests\CandidatsRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Config;
+use App\Http\Requests;
+use App\User;
+use App\Region;
+use App\Responsible;
+use App\Story;
+use App\Candidat;
+use App\Historic;
+use App\Step;
+use App\Account;
+use App\Categorie;
+use App\CategorieStep;
+
+
+class CooptationController extends Controller
+{
+   /**
+	 * Affiche la vue de cooptation
+	*/
+   public function index(Request $request)
+   {
+   	// authentification nécessaire
+		if(Auth::user() != null){
+			if(Auth::user()->role == "admin" || Auth::user()->role == "superAdmin"){
+						
+				
+				//COOPTATION
+				// Sélection des collaborateurs ayant proposé des candidats
+				$cooptants = Account::groupBy('accounts.user_id')
+				             ->select('accounts.user_id','users.lastname', 'users.firstname', DB::raw('count(*) as cooptes, sum(accounts.score) as score'))
+							 ->join('users', 'users.id', '=', 'accounts.user_id' )
+							 ->orderBy('users.lastname')
+							 ->get();
+
+
+				 //$cooptants = Account::select('accounts.*')->distinct()->get();
+				 //dd($cooptants);
+				
+				return view('admin.cooptation', ['cooptants' =>  $cooptants]);
+			} else{
+
+				return Redirect::route("admin/logout");
+			}
+		} else{
+			return Redirect::route("admin/login")->withErrors(ucfirst(Lang::get('label.please-login')));
+		}
+	}
+
+	/**
+	 * Affiche la vue du cooptant avec tous ses cooptés
+	*/
+	public function showCooptant(Request $request, $id)
+	{
+			// authentification nécessaire
+		if(Auth::user() != null){
+			if(Auth::user()->role == "admin" || Auth::user()->role == "superAdmin"){
+				
+				//COOPTATION
+				// Sélection du collaborateur à partir de son id
+				$cooptant = User::find($id);
+				// Sélection de tous les cooptés du collaborateur
+				$userCooptes = Account::select('accounts.candidat_id', 'accounts.step_id', 'accounts.user_id', 'accounts.score', 'candidats.lastname', 'candidats.firstname', 'candidats.reference')
+									->where('accounts.user_id', '=', $id)
+									->join('candidats', 'candidats.id', '=', 'accounts.candidat_id')
+									->get();
+									//dd($userCooptes);
+				
+				return view('admin.cooptant', ['cooptant' =>  $cooptant, 'userCooptes' => $userCooptes]);
+			} else{
+
+				return Redirect::route("admin/logout");
+			}
+		} else{
+			return Redirect::route("admin/login")->withErrors(ucfirst(Lang::get('label.please-login')));
+		}
+		
+	}
+
+	/**
+	 * Affiche la vue de détail du coopté 
+	*/
+	public function showCandidat($id)
+	{
+			// authentification nécessaire
+		if(Auth::user() != null){
+			if(Auth::user()->role == "admin" || Auth::user()->role == "superAdmin"){
+					 //Sélection du candidat et ses étapes selon la catégorie
+				   $candidat = Candidat::select('candidats.id as candidat_id', 'candidats.lastname', 'candidats.firstname', 'candidats.reference', 'candidats.created_at', 'offres.poste', 'offres.categorie_id', 'categorie_steps.id as categorie_step_id', 'categorie_steps.ordre', 'accounts.is_done')
+				   								->where ('candidats.id', '=', $id)
+				   								->join('offres','offres.id', '=', 'candidats.offre_id')
+				   								->join('categorie_steps', 'categorie_steps.id', '=', 'offres.categorie_id')
+				   								->join('accounts', 'candidats.id', '=', 'accounts.candidat_id')
+				   								->first();
+				   								//dd($candidat);
+
+				   //Selection de l'ordre selon l'id de la catégorie, dans la table Categorie_steps 					
+				  $categorieId = $candidat->categorie_id;			
+
+				  $ordres = CategorieStep::select('categorie_steps.ordre', 'steps.label', 'step_id')
+				  								->join('steps', 'steps.id', '=', 'categorie_steps.step_id')
+				  								//->join('categories', 'categories.id', '=', 'categorie_steps.categorie_id')
+				  								 ->where('categorie_steps.categorie_id', '=', $categorieId)
+				  								 ->orderBy('categorie_steps.ordre') 
+												 ->get();
+												 //dd($ordres);
+												 
+				 //Selection de l'étape du candidat dans la table account selon l'id du candidat.
+				 $candidatId	= $candidat->candidat_id;
+
+				 $step = Account::select('accounts.step_id', 'categorie_steps.ordre')
+				 						->join('categorie_steps', 'categorie_steps.step_id', '=', 'accounts.step_id')
+				 						->where('accounts.candidat_id', '=',  $candidatId)
+				 						->where('categorie_steps.categorie_id', '=', $categorieId)
+				 						->first();
+				 						//dd($step->step_id);
+
+
+
+				 						//On compte le nombre total d'étapes selon la catégorie
+				$totalSteps = CategorieStep::select('categorie_steps.ordre')
+													->where('categorie_steps.categorie_id', '=', $categorieId)
+													->count();
+													//dd($candidat->account());
+													//dd($candidat->account()->first());
+
+													// Sélection de toutes les étapes du candidat dans l'historique
+				$stepCandidats = Historic::select('historics.step_id', 'historics.created_at', 'steps.label')
+										  // ->where([
+												//   	['historics.candidat_id', '=', $candidatId ]
+												//   	['historics.step_id', '>', 1]
+										  // 		])
+										  ->where('historics.candidat_id', '=', $candidatId)
+				                          ->join('steps', 'steps.id', '=', 'historics.step_id')
+				                          ->orderBy('steps.id')
+				                          ->get();
+				                          //dd($stepCandidats);
+
+				return view('admin.candidat', ['candidat' => $candidat, 'ordres' => $ordres, 'step' => $step, 'totalSteps' => $totalSteps, 'stepCandidats' => $stepCandidats]);
+			} else{
+
+				return Redirect::route("admin/logout");
+			}
+		} else{
+			return Redirect::route("admin/login")->withErrors(ucfirst(Lang::get('label.please-login')));
+		}
+		
+	}
+
+
+
+	/**
+	 * Affiche tous les candidats par ordre alphabétique
+	*/
+	public function showCandidats(Request $request)
+	{
+		
+		// authentification nécessaire
+		if(Auth::user() != null){
+			if(Auth::user()->role == "admin" || Auth::user()->role == "superAdmin"){
+				
+				
+				//COOPTATION
+			
+				// Sélection de tous les candidats
+				//Lilitation du nombre de candidat par page
+				$pagination = Config::get('custom.pagination');
+				$candidats = Candidat::select( 'candidats.id', 'candidats.lastname', 'candidats.firstname', 'candidats.poste', 'candidats.created_at')
+									->orderBy('candidats.lastname')
+									// ->join('steps', 'steps.id', '=', 'accounts.step_id')
+									// ->join ('historics', 'steps.id', '=', 'historics.step_id')
+									->paginate($pagination);
+									//dd($candidats);
+									//dd($candidat->creation_date);
+									//as creation_date
+									//historics.created_at as historic_date
+
+				
+				return view('admin.candidats', ['candidats' => $candidats, 'pagination' => $pagination]);
+			} else{
+
+				return Redirect::route("admin/logout");
+			}
+		} else{
+			return Redirect::route("admin/login")->withErrors(ucfirst(Lang::get('label.please-login')));
+		}
+		
+	}
+
+
+	/**
+	 * Traitement des étapes
+	*/
+	public function etapes(Request $request)
+	{
+  		
+		// authentification nécessaire
+		if(Auth::user() != null){
+			if(Auth::user()->role == "admin" || Auth::user()->role == "superAdmin"){
+				
+				//COOPTATION
+				// Sélection de tous les cooptés du collaborateur
+				$candidatId = $request->input('id');
+				$categorieId = $request->input('categorie_id');
+				//$step = $request->input('categorie_id');
+
+				//dd($categorieId);
+				//dd($step);
+
+				$candidat = Account::select('accounts.candidat_id', 'accounts.user_id', 'accounts.step_id', 'accounts.score', 'candidats.lastname', 'candidats.firstname', 'candidats.reference', 'candidats.created_at', 'steps.label', 'steps.step_number', 'steps.point', 'users.id as admin_id', 'users.lastname as admin_lastname', 'users.firstname as admin_firstname')
+									->where('accounts.candidat_id', '=', $candidatId)
+									//->where('categorie_steps.categorie_id', '=', $categorieId)
+									//->where('categorie_steps.step_id', '=', 'accounts.step_id')
+									//->where('offres.categorie_id', '=', $categorieId)
+									//->where('step_id', '=', 'ordre')
+									->join('candidats', 'candidats.id', '=', 'accounts.candidat_id')
+									->join('offres', 'offres.id', '=', 'candidats.offre_id')
+									//->join('categorie_steps', 'categorie_steps.categorie_id', '=', 'offres.categorie_id')
+									->join('steps', 'steps.id', '=', 'accounts.step_id')
+									->join('users', 'users.id', '=', 'accounts.user_id' )
+									->first();
+				//dd($candidat);
+				/*$candidat = Account::select('accounts.*', 'candidats.firstname', 'offres.poste', 'offres.categorie_id', 'categories.label', 'steps.label')
+									->join('candidats', 'candidats.id', '=', 'accounts.candidat_id')
+									->join('offres', 'offres.id', '=', 'candidats.offre_id')
+									->join('categories', 'categories.id', '=', 'offres.categorie_id')
+									->join('steps', 'steps.id', '=', 'accounts.step_id')
+									// ->join('categorie_steps', 'categorie_steps.step_id', '=', 'steps.id')
+									// ->join('categorie_steps', 'categorie_steps.categorie_id', '=', 'categories.id')
+									// ->where ('categorie_steps.step_id', '=', 'steps.id')
+									// ->where ('categorie_steps.categorie_id', '=', 2)
+									//->where ('categorie_steps.step_id', '=', 'accounts.step_id')
+									->get();*/
+
+				$ordre = CategorieStep::where ('step_id', '=', $candidat->step_id)
+										->where ('categorie_id', '=', $categorieId)
+										->first();
+
+				//dd($ordre);
+
+				// Sélection de toutes les étapes du candidat dans l'historique
+				$stepCandidats = Historic::select('historics.step_id', 'historics.created_at', 'steps.label')
+										  // ->where([
+												//   	['historics.candidat_id', '=', $candidatId ]
+												//   	['historics.step_id', '>', 1]
+										  // 		])
+										  ->where('historics.candidat_id', '=', $candidatId)
+				                          ->join('steps', 'steps.id', '=', 'historics.step_id')
+				                          ->orderBy('steps.id')
+				                          ->get();
+				                          //dd($stepCandidats);
+
+				//Récupération des données du cooptant, du coopté, et de l'admin qui a validé l'étape.					
+				$score = $candidat->score;
+				//$step = $candidat->step_id;
+				$stepPoint = $candidat->point;
+				//$candidatId = $candidat->candidat_id; 
+				$userId = $candidat->user_id;
+				$adminId = $candidat->admin_id;
+				$adminLastname = $candidat->admin_lastname;
+				$adminFirstname = $candidat->admin_firstname;
+				//dd($adminLastname);
+
+				
+				//Mis à jour des données dans la table account
+				//On compte le nombre total d'étapes selon la catégorie
+				$totalSteps = CategorieStep::select('categorie_steps.ordre')
+													->where('categorie_steps.categorie_id', '=', $categorieId)
+													->count();
+													//dd($totalSteps);
+
+				//Récupération de l'ordre sur la page étape
+				$ordres = CategorieStep::select('categorie_steps.ordre', 'steps.label', 'step_id')
+				  								->join('steps', 'steps.id', '=', 'categorie_steps.step_id')
+				  								//->join('categories', 'categories.id', '=', 'categorie_steps.categorie_id')
+				  								 ->where('categorie_steps.categorie_id', '=', $categorieId)
+				  								 ->orderBy('categorie_steps.ordre'); 
+												 
+												 //dd($ordres);
+
+				// $step = Account::select('accounts.step_id')
+				//  						->where('accounts.candidat_id', '=',  $candidatId)
+				//  						->first();
+				 						//dd($step->step_id);
+				
+
+				//On utilise une transaction
+				DB::beginTransaction();
+				//On vérifie que l'étape finale n'est pas atteinte
+				try {
+
+					//Insertion des données dans la table historics après le update
+					$historic = new Historic;
+					$historic->user_id = $userId;
+					$historic->candidat_id = $candidatId;
+					$historic->step_id = $candidat->step_id;
+					$historic->admin_id = $adminId;
+					$historic->admin_lastname = $adminLastname;
+					$historic->admin_firstname = $adminFirstname;
+					$historic->save();
+
+
+
+					if($ordre->ordre < $totalSteps) {
+						//var_dump($ordre->ordre)
+						$nextStep = $ordre->ordre + 1;
+
+						$step = $ordres->where('categorie_steps.ordre', '=', $nextStep)->first();
+
+						//dd($step);
+						if($step != null){
+							$account = DB::table('accounts')
+									->where('candidat_id', '=', $candidatId)
+									->update(['score' => $score + $stepPoint,
+											  'step_id' => $step->step_id
+											]);
+							
+
+						}
+
+					} else if($ordre->ordre == $totalSteps) {
+						 
+							$account = DB::table('accounts')
+									->where('candidat_id', '=', $candidatId)
+									->update(['is_done' => 1]);
+						}
+
+				} catch (ValidationException $e) {
+					DB::rollback();
+				}
+
+
+
+				DB::commit();
+				
+		       return redirect()->action('CooptationController@showCandidat',['id'=> $request->input('id')]);
+			   //return view('admin.candidat', ['candidat' => $candidat, 'stepCandidats' => $stepCandidats, 'totalSteps' => $totalSteps, 'ordres' => $ordres, 'step' => $step]);
+			} else{
+
+				return Redirect::route("admin/logout");
+			}
+		} else{
+			return Redirect::route("admin/login")->withErrors(ucfirst(Lang::get('label.please-login')));
+		}
+  		
+	 }
+}
+=======
+<?php
+
+namespace App\Http\Controllers;
+
+use DB;
+use Auth;
+use DateTime;
+use App\Model\Job;
+use App\Model\Step;
+use App\Model\User;
+use App\Model\Account;
+use App\Model\Candidat;
+use App\Model\Historic;
+use App\Model\Categorie;
+use App\Model\CategorieStep;
+use Illuminate\Http\Request; 
+use App\Mail\MessageToCandidat;
+use App\Mail\MessageToCooptant;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Config;
+use App\Http\Requests\CooptationRequest;
+use App\Repositories\Cooptation\CooptationInterface;
+
+
+class CooptationController extends Controller
+{
+    
+    /**
+     * @var [CooptationInterface]
+     */
+    protected $cooptationInterface;
+
+    /**
+     * Ce controlleur nécessite une authentification
+     *
+     * @return void
+     */
+    public function __construct(CooptationInterface $cooptationInterface)
+    {
+        $this->cooptationInterface = $cooptationInterface;
+        
+        $this->middleware('auth')->except('coopter');
+    }
+    
+    /**
+     * Retourne tous les candidats de la base de données
+     *
+     * @return [CooptationInterface] $cooptations
+     */
+    public function index()
+    {
+
+        $cooptations = $this->cooptationInterface->getAll();
+    
+        return view('cooptation', compact('cooptations'));
+
+    }
+
+    /**
+     * Fonction qui permet d'enregistrer la candidature et d'envoyer
+     * un email au canditat avec un lien pour postuler.
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function coopter(CooptationRequest $request)
+    {
+        
+        $this->cooptationInterface->createCoopter($request);
+                
+    }
+
+    /**
+     * Retourne tous les cooptants
+     * avec chacun le nombre de candidats proposé, 
+     * ainsi que chacun leur point
+     *
+     * @return [CooptationInterface] $cooptants
+     */
+    public function cooptants()
+    {
+        
+        $cooptants = $this->cooptationInterface->getCooptants();
+
+        return view('cooptants', compact('cooptants'));
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param [User] $id
+     * @return [CooptationInterface] $cooptant
+     */
+    public function cooptant($id)
+    {
+        
+        $id = (int)$id;
+    
+        if($id){
+        
+            $cooptant = $this->cooptationInterface->getCooptantById($id);
+
+            $coopters = $this->cooptationInterface->getCooptersByCooptantId($id);
+    
+            return view('cooptant', compact('coopters', 'cooptant'));
+
+        } else {
+
+            throw new CustomException;
+        }
+    
+    }
+
+    /**
+     * @param mixed $id
+     * 
+     * @return [CooptationInterface] $cooptationInterface
+     */
+    public function candidat($candidatId)
+    {
+        
+        $candidatId = (int)$candidatId;
+
+        if($candidatId) {
+
+            $candidat = $this->cooptationInterface->getCandidat($candidatId);
+
+            // return  $candidat;
+            // Recherche des étapes en fonction de la catégorie
+            //On récupére la catégorie de la précédente requête
+            $categorieId = $candidat->categorie_id;
+
+            $etapes = $this->cooptationInterface->getEtapes($categorieId);
+
+            //Recherche de l'étape du candidat dans la table accounts
+            // en prenant en compte la catégorie
+            // On retient l'id du candidat
+            $candidat_id = $candidat->candidat_id;
+
+            $step = $this->cooptationInterface->getStep($candidat_id, $categorieId);
+            
+            $totalSteps = $this->cooptationInterface->getTotalSteps($categorieId);
+        
+            $historicStepCandidats = $this->cooptationInterface->getHistoricStepCandidats($candidat_id);
+        
+        }
+
+        return view('candidat', compact('candidat', 'etapes', 'step', 'totalSteps', 'historicStepCandidats'));
+    }
+
+	/**
+	 * @param CooptationRequest $request
+	 * 
+	 * @return [cooptationInterface] $cooptationInterface
+     * 
+     * @return redirect CooptationController@candidat
+	 */
+	public function etapes(CooptationRequest $request)
+    {
+    
+        $candidatId = $request->input('id');
+        $categorieId = $request->input('categorie_id');
+
+        //Cette fonction permet de rechercher le candidat par son $id
+        // il est utilisée aussi bien pour function candidat($candidatId) get
+        // et pour function etapes(CooptationRequest $request) post
+        $candidat = $this->cooptationInterface->getCandidat($candidatId);
+
+        //On recherche l'ordre selon la catégorie et le step_id
+        //On retient le step_id
+        $stepCandidat =  $candidat->step_id;
+
+        $ordre = $this->cooptationInterface->getOrdre($stepCandidat, $categorieId);
+
+        // Sélection de toutes les étapes du candidat dans la table historics
+        $historicStepCandidats = $this->cooptationInterface->getHistoric($candidatId);
+
+        //Récupération des données du candidat					
+        $score = $candidat->score;
+        $stepNote = $candidat->note;
+        // $stepCandidat =  $candidat->step_id;
+    
+        //Récupération des données du cooptant
+        $userId = $candidat->user_id;
+
+        //Récupération des données de l'admin qui est connecté	                                   
+        $adminId = Auth::user()->id;
+        $adminFirstname = Auth::user()->firstname;
+        $adminLastname = Auth::user()->lastname;
+    
+        //MISE A JOUR DES DONNEES DANS LA TABLE ACCOUNT
+        //Récupération du nombre total d'étapes dans la catégorie
+        //On compte le nombre total d'étapes selon la catégorie
+        $totalSteps = $this->cooptationInterface->countStep($categorieId);
+
+        //Récupération de l'ordre sur la page étape
+        $ordres = $this->cooptationInterface->getOrdres($categorieId);
+		
+        //Création de l'étape en utilisant une transaction pour cette opération
+        $this->cooptationInterface->createEtapes($userId, $candidatId, $stepCandidat, $adminLastname,
+                                                    $totalSteps,$adminFirstname, $adminId, $ordre,  
+                                                    $ordres, $score, $stepNote);
+        
+        // On fait une redirection pour actualiser la page en passant l'action
+        // du controller  candidat en deuxième argument l'id du candidat
+		return redirect()->action('CooptationController@candidat', ['id'=> $candidatId]);
+    }
+}
+>>>>>>> .r87

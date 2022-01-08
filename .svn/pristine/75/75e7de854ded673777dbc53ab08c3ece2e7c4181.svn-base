@@ -1,0 +1,16 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Candidat extends Model
+{
+    protected $fillable = ["id", "lastName", "firstName", "reference", "poste", "categorie"];
+
+    // Cooptation
+    public function account()
+    {
+        return $this->hasOne('App\Account');
+    }
+}

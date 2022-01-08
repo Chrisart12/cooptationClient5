@@ -1,0 +1,18 @@
+@extends('layout.gallerylayout')
+
+@section('content')
+
+	<?php 
+
+		$baseUrl = App::make('url')->to('/');
+		
+	?>
+	<div class="scrollable">
+		<div class="row text-center">
+			
+				<p class="texte confirmOffer">Votre candidat Mr a été bien enregistré, nous vous remercions.</p>
+				
+		</div>
+	</div>
+
+@stop

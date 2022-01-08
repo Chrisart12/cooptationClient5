@@ -1,0 +1,29 @@
+#menu, .confirmOffer
+{
+	margin-top: 60px;
+}
+
+.menu
+{
+	margin-top: 30px;
+	font-size: 25px;
+}
+
+.texte
+{
+	font-size: 18px;
+	margin-left: 20px;
+	margin-right: 10px;
+}
+
+.envoyer
+{
+	background-color: black;
+	color: white;
+}
+
+.formOffer
+{
+	margin-top: 60px;
+}
+

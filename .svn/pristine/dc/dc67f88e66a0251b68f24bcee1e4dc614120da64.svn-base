@@ -1,0 +1,15 @@
+<?php
+
+	return array(
+	  'lang' => ['1' => 'fr', '2' => 'en'],
+	  'path_to_root' => '..',
+	  // 'project_realurl' => 'http://dev.obeinglish.com/',
+	  'project_url' => 'http://localhost:83/heliop/Twinin/MaStory/',
+	  // 'project_path' => 'W:\MAMP\htdocs\Obeinglish',
+	  // 'resources_path' => 'W:\MAMP\htdocs\Obeinglish\resources\\',
+	  'project_name' => 'MaStory',
+	  'sender_mail' => 'tek@heliop.com',
+	  'sender_name' => 'THOM Europe',
+	  'gallery_mode' => '',
+	  'demo_stories' => ['story1', 'story2', 'story3']
+	);

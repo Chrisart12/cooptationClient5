@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="<?php echo e(app()->getLocale()); ?>">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+
+    <!-- <title><?php echo e(config('app.name', 'Laravel')); ?></title> -->
+    <!-- FontAwesome -->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <!-- Styles -->
+   
+    <link href="<?php echo e(asset('public/css/style.css')); ?>" rel="stylesheet">
+    <link rel="icon" type="image/png" href="<?php echo e(asset('icons/logo6.png')); ?>">
+
+
+    <title>MaStory | <?php echo e(isset($title) ? $title : ''); ?></title>
+
+    <?php echo Html::style("css/styles.css"); ?>
+
+    <!--[if lt IE 9]>
+        <?php echo Html::script("https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.js"); ?>
+
+        <?php echo Html::script("https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"); ?>
+
+    <![endif]-->
+</head>
+    <body id="body">
+        <div id="app">
+           
+            <div id="page404" >
+                  <p class="center-block">404</p>
+                  <p>La page que vous recherchez est introuvable</p>
+            </div>
+        </div>
+      
+    </body>
+</html>
+

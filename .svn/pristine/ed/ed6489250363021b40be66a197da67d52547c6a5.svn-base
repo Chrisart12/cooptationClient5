@@ -1,0 +1,39 @@
+@extends('admin.layout.cooptationlayout')
+
+@section('content')
+
+	<?php 
+
+		$baseUrl = App::make('url')->to('/');
+		$title = 'OFFRE';
+	?>
+
+	<div class=" pages">
+		<table class="container">
+			<div class="bouton">
+				<a href="javascript:history.back()"><button class="voir"><img src="{{ asset('public/icons/back1.png') }}">RETOUR</button></a>
+				<a href="{{route('admin.offres.create')}}"><button class="voir">PUBLIER</button></a>
+			</div>
+			<center class="listeCooptation">
+				<h2>{{ $offre->poste }}</h2>
+		
+					<div>
+						<p>{{ $offre->lieu }}</p>
+						<p>Réf : {{ $offre->reference }}</p>
+						<p>Catégorie : {{ $offre->categorie }}</p>
+						<p>{{ $offre->description }}</p>
+					</div>
+					<div class="row edit_delete">
+						<a href="{{ $offre->id . '/' . 'edit' }}"><button class="cooptation">MODIFIER</button></a>
+						{!! Form::open(['method' => 'DELETE', 'route' => ['admin.offres.destroy', $offre->id]]) !!}
+						{!! Form::submit('SUPPRIMER', ['class' => 'cooptation', 'onclick' => 'return confirm(\'Vraiment supprimer cette annonce ?\')']) !!}
+						{!! Form::close() !!}
+					</div>
+			</center>
+
+			
+			
+	</div>
+
+
+@stop

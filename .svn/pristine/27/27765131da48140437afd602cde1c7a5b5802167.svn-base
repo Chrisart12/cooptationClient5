@@ -1,0 +1,90 @@
+@extends('admin.layout.gallerylayout')
+
+@section('content')
+	@include('admin.partials.flash')
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+	<div class="container pages ">
+
+		<a href="javascript:history.back()"><button class="voir"><img src="{{ asset('public/icons/back1.png') }}">RETOUR</button></a>
+
+		<div class="alignement listeCooptation">
+			 <div>
+			 	<div><span class="designation">CANDIDAT</span></div>
+				<br>
+				<br>
+				<div>
+					<p class="cooptants">{{ strtoupper($candidat->lastname) . ' ' . $candidat->firstname}}</p>
+					<p class="cooptants">Référence : {{ $candidat->reference }} </p>
+					<p class="cooptants">Date de candidature : {{ date('d-m-Y', strtotime( $candidat->date_de_creation )) }} </p>
+				</div>
+				<br>
+				<br>
+
+				@if($candidat->step_number < 9)
+					<div>
+						<p class="text_valider">Pour valider l'étape <span class="step" >{{ $candidat->label }}</span>, cliquez</p>
+					</div>
+				@else
+				    <div>
+						<p class="text_valider">Fin des étapes</p>
+					</div>
+				@endif
+				
+				
+				<form method="POST" action="{{ 'etapes' . '/' . $candidat->step_id }}" data-remote data-remote-success-message="L'étape {{ $candidat->label }} est passée." >
+						{{ csrf_field() }}
+
+						<input type="hidden" name="id" id="firstRdv" value="{{ $candidat->candidat_id }}">
+						<button type="submit" class="valider_etape">VALIDER</button>
+						
+				</form>
+			</div>
+		
+			<div>
+				<div ><span class="designation ">ETAPES</span></div>
+				<br>
+				<br>
+				{{-- @if($candidat->step_number < 9)
+					<div>
+						<p class="etapes text-center ">{{ $candidat->label }}</p>
+					</div>
+				@else
+				    <div>
+						<p class="etapes text-center fin_etape">{{ $candidat->label }}</p>
+					</div>
+				@endif --}}
+				
+				@forelse($stepCandidats as $stepCandidat)
+					<div>
+						<p class="etapes historics text-center ">{{ $stepCandidat->label }}</p>
+					</div>
+				@empty
+					<div>
+						<p class="cooptants">L'utilisateur n'a passé aucune étape pour l'instant.</p>
+					</div>
+				@endforelse
+			</div>
+
+			<div>
+				<div><span class="designation">DATES</span></div>
+				<br>
+				<br>
+
+				{{-- <div>
+					<p class=" date ">{{ date('d-m-Y', strtotime( $candidat->date_etape )) }}</p>
+				</div> --}}
+				@foreach($stepCandidats as $stepCandidat)
+					<div>
+						<p class="date">{{ date('d-m-Y H:i:s', strtotime( $stepCandidat->created_at )) }}</p>
+					</div>
+				@endforeach
+			</div>
+		</div>
+	</div>
+
+@stop

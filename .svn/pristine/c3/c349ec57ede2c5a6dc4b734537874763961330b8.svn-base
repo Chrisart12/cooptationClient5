@@ -1,0 +1,16 @@
+<<<<<<< .mine
+.top30-container {
+    margin-top: -80px;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}||||||| .r0
+=======
+.top30-container {
+    margin-top: -50px;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}>>>>>>> .r87

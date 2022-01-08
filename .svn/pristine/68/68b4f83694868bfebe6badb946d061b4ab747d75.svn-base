@@ -1,0 +1,15 @@
+.btn-detail{
+    width: 130px;
+    height: 40px;
+    font-size: 0.8em;
+    color: $backgroundColor;
+    background-color: $titleColorRed;
+    border-radius: $borderRadiux;
+    // border: solid $borderColor 2px;
+    @include borderInput;
+
+    @include BigSmartphonesPortrait{
+        width: 70px;
+        height: 30px;
+    }
+}

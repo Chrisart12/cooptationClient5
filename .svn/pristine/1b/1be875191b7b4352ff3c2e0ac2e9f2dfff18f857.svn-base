@@ -1,0 +1,115 @@
+#menu, .confirmOffer
+{
+	margin-top: 60px;
+}
+
+.menu
+{
+	margin-top: 30px;
+	font-size: 25px;
+}
+
+.texte
+{
+	font-size: 18px;
+	margin-left: 20px;
+	margin-right: 10px;
+}
+
+.envoyer
+{
+	background-color: black;
+	color: white;
+}
+
+.formOffer
+{
+	margin-top: 60px;
+}
+
+/*-------- ADMIN -----*/
+.cooptation
+{
+	position: relative;
+	background-color: #000000;
+	color: white;
+	padding: 10px;
+	border: black;
+	left: 500px;
+}
+
+.cooptation:hover
+{
+	background-color: #FFFFFF;
+	color: #443737;
+	box-shadow: 2px 1px 4px;
+}
+
+.cooptants
+{
+	color: white;
+}
+
+.listeCooptation
+{
+	margin-top: 120px;
+	font-size: 20px;
+}
+
+.designation
+{
+	color: white;
+	font-weight: bold;
+}
+
+.intitule
+{
+ 	border-bottom: 2px solid white;
+}
+
+.voir
+{
+	width: 100px;
+	height: 40px;
+	background-color: #FFFFFF;
+	color: #443737;
+}
+
+.etapes
+{
+	width: 290px;
+	height: 40px;
+	background-color: #FFFFFF;
+	color: #443737;
+}
+
+.etapes:hover, .etape:hover, .voir:hover
+{
+	box-shadow: 2px 1px 4px;
+	background-color: #bdbdbd;
+}
+
+.etape
+{
+	width: 140px;
+	margin-right: 10px;
+	height: 40px;
+	background-color: #FFFFFF;
+	color: #443737;
+}
+
+.dates
+{
+	width: 290px;
+	height: 40px;
+}
+
+/* Message pour la cooptation */
+.flash
+{
+	position: absolute;
+	top: 150px;
+	right: 900px;
+	z-index: 10000;
+} 
+

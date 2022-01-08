@@ -1,0 +1,30 @@
+@extends('layout.gallerylayout')
+
+@section('content')
+
+	<?php 
+
+		$baseUrl = App::make('url')->to('/');
+		
+	?>
+	<div class="scrollable">
+	<div class="row  text-center" id="menu">
+		
+			<div class="menu">
+			
+				<a href="">
+					GALERIE
+				</a>
+			</div>
+			<div class="menu">
+				<a href="">CGU</a>	
+			</div>
+				
+			<div class="menu">
+				<a href="{{ url('offer') }}">OFFRES</a>
+			</div>
+			
+	</div>
+	</div>
+
+@stop

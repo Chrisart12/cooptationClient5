@@ -1,0 +1,8 @@
+// .partial-filter-container{
+//     background-color: $titleColorRed;
+//     width: 100%;
+//     height: 150px;
+//     padding-top: 90px;
+//     position: sticky;
+//     @include headerBorder;
+// }

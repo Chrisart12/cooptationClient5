@@ -1,0 +1,60 @@
+<?php $__env->startSection('content'); ?>
+
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+<div class="container pages">
+
+	<a href="javascript:history.back()"><button class="retour"><img src="<?php echo e(asset('public/icons/back1.png')); ?>">RETOUR</button></a>
+
+	<div class="listeCooptation row ">
+		<div class="col-lg-4 designation "><span class="intitule">COLLABORATEURS</span>
+			<br>
+			<br>
+			<p>
+				<?php foreach( $cooptants as  $cooptant): ?>
+					<div class="cooptants"><?php echo e($cooptant->lastname . ' ' .  $cooptant->firstname); ?> </div>
+					<br>
+				<?php endforeach; ?>
+			</p>
+		</div>
+		<div class="col-lg-2 text-center designation"><span class="intitule">NOMBRE DE CANDIDATS</span>
+			<br>
+			<br>
+			<p>
+				<?php foreach( $cooptants as  $cooptant): ?>
+					<div class="cooptants"><?php echo e($cooptant->cooptes); ?> </div>
+					<br>
+				<?php endforeach; ?>
+			</p>
+		</div>
+		<div class="col-lg-2 designation"><span class="intitule">TOTAL DES POINTS</span>
+			<br>
+			<br>
+			<p>
+				<?php foreach( $cooptants as  $cooptant): ?>
+					<div class="cooptants"><?php echo e($cooptant->score); ?></div>
+					<br>
+				<?php endforeach; ?>
+			</p>
+		</div>
+		<div class="col-lg-3 designation"><span class="intitule"></span>
+			<br>
+			<br>
+			<p>
+				<?php foreach( $cooptants as  $cooptant): ?>
+					<div > <a href="<?php echo e('cooptant' . '/' . $cooptant->user_id); ?>"><button class="col-lg-offset-4 voir">VOIR</button></a></div>
+					<br>
+				<?php endforeach; ?>
+			</p>
+		</div>
+	</div>
+	
+</div>
+
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout.gallerylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

@@ -1,0 +1,77 @@
+<?php $__env->startSection('content'); ?>
+	<?php echo $__env->make('admin.partials.flash', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+<div class="container pages designation">
+
+	<a href="javascript:history.back()"><button class="retour"><img src="<?php echo e(asset('public/icons/back1.png')); ?>">RETOUR</button></a>
+
+	<div class="row listeCooptation">
+		<div class="col-lg-4"><span class="intitule">CANDIDAT</span>
+			<br>
+			<br>
+			<div>
+				<p><?php echo e(strtoupper($candidat->lastname) . ' ' . $candidat->firstname); ?></p>
+				<p>Poste : </p>
+				<p>Référence : <?php echo e($candidat->reference); ?> </p>
+				<p>Date de candidature : <?php echo e(date('d-m-Y', strtotime( $candidat->date_de_creation ))); ?> </p>
+			</div>
+			<br>
+			<br>
+		<p class="text_valider">Pour valider l'étape, cliquez sur valider</p>
+		<form method="POST" action="<?php echo e('etapes' . '/' . $candidat->step_id); ?>" data-remote data-remote-success-message="Le 1er rendez-vous est passé." >
+				<?php echo e(csrf_field()); ?>
+
+
+				<input type="hidden" name="id" id="firstRdv" value="<?php echo e($candidat->candidat_id); ?>">
+				<button type="submit" class="valider_etape">VALIDER</button>
+				
+		</form>
+		</div>
+
+		<div class="col-lg-4"><span class="intitule">ETAPES</span>
+			<br>
+			<br>
+			
+			<div>
+				<?php /* <p><a href="<?php echo e('firstRdv' . '/' . $candidat->candidat_id); ?> "><button class="etapes" data-background-color="#64DD17" data-text-color="#FFFFFF" data-remote>1er RDV</button></a></p> */ ?>
+				<p class="etapes text-center"><?php echo e($candidat->label); ?></p>
+				<?php /* <p><button class="etape">VALIDE</button><button class="etape">NON VALIDE</button></p>
+				<br>
+				<p><button class="etapes">INTEGRATION</button></p>
+				<p><button class="etapes">1er ESSAI</button></p>
+				<p><button class="etapes">2e ESSAI</button></p>
+				<p><button class="etape">VALIDE</button><button class="etape">NON VALIDE</button></p>
+				<br>
+				<p><button class="etapes">CDI</button></p>
+				<p><button class="etapes">6 MOIS</button></p> */ ?>
+			</div>
+		</div>
+		<div class="col-lg-4"><span class="intitule">DATES</span>
+			<br>
+			<br>
+			<div>
+				<p class="dates"><?php echo e(date('d-m-Y', strtotime( $candidat->date_etape ))); ?></p>
+				<?php /* ->format('d-m-Y') */ ?>
+				<?php /* <p class="dates">18 janvier 2019</p>
+				<p class="dates">18 janvier 2019</p>
+				<br>
+				<p class="dates">18 janvier 2019</p>
+				<p class="dates">18 janvier 2019</p>
+				<p class="dates">18 janvier 2019</p>
+				<p class="dates">18 janvier 2019</p>
+				<br>
+				<p class="dates">18 janvier 2019</p>
+				<p class="dates">18 janvier 2019</p> */ ?>
+			</div>
+		</div>
+		
+	</div>
+	
+</div>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout.gallerylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

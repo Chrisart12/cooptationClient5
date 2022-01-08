@@ -1,0 +1,29 @@
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    //-moz-box-sizing: border-box;
+}
+
+html, body {
+    height: 100vh;
+}
+
+body {
+	width: 100%;
+    background: $backgroundColor;
+    color: $textColorBlackTwo;
+    font-family: 'Saira', sans-serif;
+}
+
+.active {
+    border-radius: $borderRadiux;
+    background-color: $backgroundColorTwo;
+    // color: $textColorBlackOne!important;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: $textColorBlackOne;
+    border-radius: $borderRadiux;
+}

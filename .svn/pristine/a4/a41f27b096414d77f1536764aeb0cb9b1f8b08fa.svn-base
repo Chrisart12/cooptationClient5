@@ -1,0 +1,24 @@
+// function changeStyle(element, backgroundColor, textColor){
+// 			element.style.backgroundColor = backgroundColor;
+// 			element.style.color = textColor; 
+// 		}
+
+// $(function(){
+//  	$('button[data-background-color]').on('click', function(){
+ 	
+//  		var backgroundColor = $(this).data('background-color');
+//  		var textColor = $(this).data('text-color');
+//  		changeStyle(this, backgroundColor, textColor);
+//  	});
+// });
+
+(function(){
+
+	$('button[data-remote]').on('click', function(e) {
+		e.preventDefault();
+	
+	var buton = $(this);
+console.log(buton);
+	});
+
+})();

@@ -1,0 +1,17 @@
+<?php $__env->startSection('content'); ?>
+
+	<?php 
+
+		$baseUrl = App::make('url')->to('/');
+		
+	?>
+	<div class="scrollable">
+		<div class="row text-center">
+			
+				<p class="texte confirmOffer">Votre candidat Mr <?php echo e(strtoupper($candidat->lastName) . ' ' . $candidat->firstName); ?> a été bien enregistré, nous vous remercions.</p>
+				
+		</div>
+	</div>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.gallerylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

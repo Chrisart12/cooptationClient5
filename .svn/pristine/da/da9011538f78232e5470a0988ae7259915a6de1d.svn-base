@@ -1,0 +1,415 @@
+<?php $__env->startSection('content'); ?>
+
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+<div class="row mystory">
+	<div class="col-xs-12 content">
+      	<div class="row galerymode outofviewport">
+        	Gallery (sélection galerie)
+			<div class="col-xs-12"> 
+				<?php echo e(Form::open(array('name' => 'galleryPicture', 'url' => 'setMyStoryPicture', 'enctype' => 'multipart/form-data'))); ?>
+
+					<?php echo e(csrf_field()); ?>
+
+					<input id="galleryUser" name="image" type="file" accept="image/*">
+				<?php echo e(Form::close()); ?>
+
+			</div>
+      	</div>
+		
+      	<div class="row capturemode outofviewport">
+        	Capture User (capture caméra)
+			<div class="col-xs-12"> 
+				<?php echo e(Form::open(array('name' => 'cameraPicture', 'url' => 'setMyStoryPicture', 'enctype' => 'multipart/form-data'))); ?>
+
+					<?php echo e(csrf_field()); ?>
+
+					<input id="captureUser" name="image" type="file" accept="image/*" capture="user" />
+				<?php echo e(Form::close()); ?>
+
+			</div>
+      	</div>
+		
+		<div class="views">
+			<div class="tutorial">
+				Parce que toi aussi
+				<br />
+				tu as une St(or)y à raconter
+				<br />
+				Parce que toi aussi tu as une histoire qui vaut l'a peine d'être lue
+				<br />
+				Raconte nous ton Histoire d'Or !
+			</div>
+			
+			<div id="galleryResult" class="galleryResult outofviewport" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+				<!-- <div class="fitContent">
+					<img id="galleryPicture" src="#" alt="your image" width="100%" />
+				</div> -->
+			</div>
+			
+			<div id="captureResult" class="captureResult outofviewport" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+				<!-- <div class="fitContent">
+					<img id="cameraPicture" src="#" alt="your image" width="100%" />
+				</div> -->
+			</div>
+		</div>
+		
+		<div class="row galleryArea outofviewport">
+			<div class="col-xs-12"> 
+				<a id="galleryUserTrigger" href="#" _onclick="performClick('galleryUser');">
+					<ion-icon name="images"></ion-icon>
+				</a>
+			</div>
+		</div>
+		
+		<div class="row captureArea outofviewport">
+			<div class="col-xs-12"> 
+				<a id="captureUserTrigger" href="#" _onclick="performClick('captureUser');">
+					<ion-icon name="camera"></ion-icon>
+				</a>
+			</div>
+		</div>
+		
+		<!-- <h2>Select an image file</h2>
+		<input id="file-input" name="image" type="file" accept="image/*" capture="user" /> -->
+		
+		<!-- <img id="mimi" height="100%" />
+		<!-- <canvas id="pic" width="3456" height="4608" style=""></canvas> -->
+		
+		<!-- <div id="test" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;"></div> -->
+		
+		<script>
+			/*document.getElementById('file-input').onchange = function (e) {
+				loadImage(
+					e.target.files[0],
+					function (img, data) {
+						var orientation = data.exif.get('Orientation');
+						console.log("Orientation: ", orientation);
+						console.log(img);
+						
+						img.setAttribute('width', 'auto');
+						img.setAttribute('height', 'auto');
+						img.setAttribute('class', 'exifOrientation'+orientation);
+						document.getElementById('test').appendChild(img);
+					},
+					{
+						// orientation: 1,
+						meta: true
+					}
+				);
+			};*/
+		</script>
+	</div>
+</div>
+
+<script>
+	function performClick(elemId) {
+	   var elem = document.getElementById(elemId);
+	   if(elem && document.createEvent) {
+		  var evt = document.createEvent("MouseEvents");
+		  evt.initEvent("click", true, false);
+		  elem.dispatchEvent(evt);
+	   }
+	}
+	
+	function readURL(input, id) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+
+			reader.onload = function(e) {
+				// $('#cameraPicture').attr('src', e.target.result);
+				$('#' + id).attr('src', e.target.result);
+			}
+			// console.log(input.files[0]);
+
+			reader.readAsDataURL(input.files[0]);
+		}
+	}
+	
+	// header interactions
+	$(document).on('click', '.header .confirm', function(){
+		$("#loaderWrapper").css('display', 'flex');
+		if($('.picture.gallery').hasClass('active')){
+			$("form[name='galleryPicture']").submit();
+		} else if($('.picture.camera').hasClass('active')){
+			$("form[name='cameraPicture']").submit();
+		}
+	});
+	
+	// footer interactions
+	$(document).on('click', '.picture.gallery', function(){
+		// 
+		if($("#galleryUser").val() == ""){
+			performClick('galleryUser');
+		}
+		
+		// 
+		$('.picture.active').removeClass('active');
+		$(this).addClass('active');
+		
+		// 
+		if($('.galleryArea').hasClass('outofviewport')){ $('.galleryArea').removeClass('outofviewport') }
+		if(!$('.captureArea').hasClass('outofviewport')){ $('.captureArea').addClass('outofviewport') }
+		// 
+		if(!$('.views .tutorial').hasClass('outofviewport')){ $('.views .tutorial').addClass('outofviewport') }
+		if(!$('.views .captureResult').hasClass('outofviewport')){ $('.views .captureResult').addClass('outofviewport') }
+		
+		// display view
+		if($("#galleryUser").val() == ""){
+			// confirm
+			$(".header .confirm").hide();
+		} else{
+			if($('.views .galleryResult').hasClass('outofviewport')){ $('.views .galleryResult').removeClass('outofviewport') }
+			// confirm
+			$(".header .confirm").show();
+		}
+	});
+	$(document).on('click', '.picture.camera', function(){
+		// 
+		if($("#captureUser").val() == ""){
+			performClick('captureUser');
+		}
+		
+		// 
+		$('.picture.active').removeClass('active');
+		$(this).addClass('active');
+		
+		//
+		if(!$('.galleryArea').hasClass('outofviewport')){ $('.galleryArea').addClass('outofviewport') }
+		if($('.captureArea').hasClass('outofviewport')){ $('.captureArea').removeClass('outofviewport') }
+		// 
+		if(!$('.views .tutorial').hasClass('outofviewport')){ $('.views .tutorial').addClass('outofviewport') }
+		if(!$('.views .galleryResult').hasClass('outofviewport')){ $('.views .galleryResult').addClass('outofviewport') }
+			
+		// display view
+		if($("#captureUser").val() == ""){
+			// confirm
+			$(".header .confirm").hide();
+		} else{
+			if($('.views .captureResult').hasClass('outofviewport')){ $('.views .captureResult').removeClass('outofviewport') }
+			// confirm
+			$(".header .confirm").show();
+		}
+	});
+	
+	// capture interaction
+	$(document).on('click', '#galleryUserTrigger', function(){
+		performClick('galleryUser');
+	});
+	$(document).on('click', '#captureUserTrigger', function(){
+		performClick('captureUser');
+	});
+	
+	// 
+	$(document).on('change', '#galleryUser', function(e){
+		if(!$('.views .tutorial').hasClass('outofviewport')){ $('.views .tutorial').addClass('outofviewport') }
+		if($('.views .galleryResult').hasClass('outofviewport')){ $('.views .galleryResult').removeClass('outofviewport') }
+		if(!$('.views .captureResult').hasClass('outofviewport')){ $('.views .captureResult').addClass('outofviewport') }
+		// confirm
+		$(".header .confirm").show();
+		
+		loadImage(
+			e.target.files[0],
+			function (img, data) {
+				if(data.exif != null){
+					var orientation = data.exif.get('Orientation');
+					
+					// navigator check
+					var ua = navigator.userAgent.toLowerCase(); 
+					if (ua.indexOf('safari') != -1) { 
+						if (ua.indexOf('chrome') > -1) {
+							// alert("chrome") // Chrome
+							img.setAttribute('width', 'auto');
+							img.setAttribute('height', 'auto');
+							img.setAttribute('class', 'exifOrientation'+orientation);
+						} else {
+							// alert("safari") // Safari
+							img.setAttribute('style', 'width:auto;height:auto;max-width:100%;max-height:100%');
+							img.setAttribute('class', 'exifOrientationSafari');
+						}
+					}
+				}
+				document.getElementById('galleryResult').innerHTML = '';
+				document.getElementById('galleryResult').appendChild(img);
+			},
+			{
+				// orientation: 1,
+				meta: true
+			}
+		);
+		
+		/*readURL(this, 'galleryPicture');
+		loadImage(
+			e.target.files[0],
+			function (img) {
+				// document.body.appendChild(img);
+				console.log(img);
+			},
+			{maxWidth: 600} // Options
+		);*/
+	});
+	$(document).on('change', '#captureUser', function(e){
+		if(!$('.views .tutorial').hasClass('outofviewport')){ $('.views .tutorial').addClass('outofviewport') }
+		if(!$('.views .galleryResult').hasClass('outofviewport')){ $('.views .galleryResult').addClass('outofviewport') }
+		if($('.views .captureResult').hasClass('outofviewport')){ $('.views .captureResult').removeClass('outofviewport') }
+		// confirm
+		$(".header .confirm").show();
+		
+		loadImage(
+			e.target.files[0],
+			function (img, data) {
+				if(data.exif != null){
+					var orientation = data.exif.get('Orientation');
+					
+					// navigator check
+					var ua = navigator.userAgent.toLowerCase(); 
+					if (ua.indexOf('safari') != -1) { 
+						if (ua.indexOf('chrome') > -1) {
+							// alert("chrome") // Chrome
+							if(orientation != null){
+								img.setAttribute('width', 'auto');
+								img.setAttribute('height', 'auto');
+								img.setAttribute('class', 'exifOrientation'+orientation);
+							} else{
+								img.setAttribute('width', 'auto');
+								img.setAttribute('height', 'auto');
+								img.setAttribute('class', 'exifOrientation0');
+								// img.setAttribute('style', 'width:auto;height:auto;max-width:100%;max-height:100%');
+								// img.setAttribute('class', 'exifOrientationSafari');
+							}
+						} else {
+							// alert("safari") // Safari
+							img.setAttribute('style', 'width:auto;height:auto;max-width:100%;max-height:100%');
+							img.setAttribute('class', 'exifOrientationSafari');
+						}
+					}
+				}
+				document.getElementById('captureResult').innerHTML = '';
+				document.getElementById('captureResult').appendChild(img);
+			},
+			{
+				// orientation: 1,
+				meta: true
+			}
+		);
+		
+		/*var file = e.target.files[0];
+		// console.log(file);
+		if (file && file.name) {
+			EXIF.getData(file, function() {
+				var exifData = EXIF.pretty(this);
+				if (exifData) {
+					console.log(exifData);
+				} else {
+					alert("No EXIF data found in image '" + file.name + "'.");
+				}
+			});
+		}*/
+		
+		// readURL(this, 'cameraPicture');
+		/*loadImage(
+			e.target.files[0],
+			function (img, data) {
+				// document.body.appendChild(img);
+				console.log(img);
+				// img.setAttribute('width', '100%');
+				// img.setAttribute('height', 'auto');
+				$('.captureResult .fitContent').append(img);
+				console.log("Original image head: ", data.imageHead);
+				console.log("Exif data: ", data.exif); // requires exif extension
+				console.log("IPTC data: ", data.iptc); // requires iptc extension
+			},
+			{
+				orientation: 4,
+				maxWidth: 600,
+				maxHeight: 300,
+				minWidth: 100,
+				minHeight: 50
+			}
+		);*/
+	});
+	
+	/*document.getElementById("captureUser").onchange = function(e) {
+		var file = e.target.files[0]
+		if (file && file.name) {
+			EXIF.getData(file, function() {
+				var exifData = EXIF.pretty(this);
+				if (exifData) {
+					alert(exifData);
+				} else {
+					alert("No EXIF data found in image '" + file.name + "'.");
+				}
+			});
+		}
+	}*/
+	
+	/*document.getElementById('captureUser').onchange = function (e) {
+		var loadingImage  = loadImage(
+			e.target.files[0],
+			function (img, data) {
+				document.body.appendChild(img);
+				console.log(e.target.files[0]);
+				// img.setAttribute('width', '100%');
+				// img.setAttribute('height', 'auto');
+				$('.captureResult .fitContent').append(img);
+				console.log("Original image head: ", data.imageHead);
+				console.log("Exif data: ", data.exif); // requires exif extension
+				console.log("IPTC data: ", data.iptc); // requires iptc extension
+			},
+			{
+				orientation: 4,
+				maxWidth: 600,
+				maxHeight: 300,
+				minWidth: 100,
+				minHeight: 50
+			}
+		);
+		
+		getExif();
+	}*/
+	
+	// window.onload=getExif;
+
+	/*function getExif() {
+		var cameraPicture = document.getElementById("cameraPicture");
+		console.log(cameraPicture);
+		EXIF.getData(cameraPicture, function() {
+			var make = EXIF.getTag(this, "Make");
+			var model = EXIF.getTag(this, "Model");
+			console.log(make);
+			console.log(model);
+			// var makeAndModel = document.getElementById("makeAndModel");
+			// makeAndModel.innerHTML = `${make} ${model}`;
+		});
+	}*/
+
+	/*function getExif() {
+		var img1 = document.getElementById("img1");
+		EXIF.getData(img1, function() {
+			var make = EXIF.getTag(this, "Make");
+			var model = EXIF.getTag(this, "Model");
+			var makeAndModel = document.getElementById("makeAndModel");
+			makeAndModel.innerHTML = `${make} ${model}`;
+		});
+
+		var img2 = document.getElementById("img2");
+		EXIF.getData(img2, function() {
+			var allMetaData = EXIF.getAllTags(this);
+			var allMetaDataSpan = document.getElementById("allMetaDataSpan");
+			allMetaDataSpan.innerHTML = JSON.stringify(allMetaData, null, "\t");
+		});
+	}*/
+	
+	// gallery interaction
+
+	$(document).ready(function(){
+		
+	});
+</script>
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.mystorylayout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

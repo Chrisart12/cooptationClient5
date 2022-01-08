@@ -1,0 +1,68 @@
+@extends('admin.layout.gallerylayout')
+
+@section('content')
+	@include('admin.partials.flash')
+<?php 
+
+	$baseUrl = App::make('url')->to('/');
+	
+?>
+
+<div class="container listeCooptation designation">
+	<div class="row">
+		<div class="col-lg-4"><span class="intitule">CANDIDAT</span>
+			<br>
+			<br>
+			<div>
+				<p>{{ strtoupper($candidat->lastname) . ' ' . $candidat->firstname}}</p>
+				<p>Poste : </p>
+				<p>Référence : {{ $candidat->reference }} </p>
+				<p>Date de candidature : {{ $candidat->created_at->format('d/m/Y') }} </p>
+			</div>
+		</div>
+		<div class="col-lg-4"><span class="intitule">ETAPES</span>
+			<br>
+			<br>
+			<form method="POST" action="{{ route('admin.firstRendezVous') }}" data-remote data-remote-success-message="Le 1er rendez-vous est passé." >
+				{{ csrf_field() }}
+
+				<input type="hidden" name="id" id="firstRdv" value="{{ $candidat->candidat_id  }}">
+				<button type="submit" class="etapes" data-background-color="#64DD17" data-text-color="#FFFFFF">1er RDV</button>
+				
+			</form>
+			<div>
+				{{-- <p><a href="{{'firstRdv' . '/' . $candidat->candidat_id }} "><button class="etapes" data-background-color="#64DD17" data-text-color="#FFFFFF" data-remote>1er RDV</button></a></p> --}}
+				<p><button class="etapes">2er RDV</button></p>
+				<p><button class="etape">VALIDE</button><button class="etape">NON VALIDE</button></p>
+				<br>
+				<p><button class="etapes">INTEGRATION</button></p>
+				<p><button class="etapes">1er ESSAI</button></p>
+				<p><button class="etapes">2e ESSAI</button></p>
+				<p><button class="etape">VALIDE</button><button class="etape">NON VALIDE</button></p>
+				<br>
+				<p><button class="etapes">CDI</button></p>
+				<p><button class="etapes">6 MOIS</button></p>
+			</div>
+		</div>
+		<div class="col-lg-4"><span class="intitule">DATES</span>
+			<br>
+			<br>
+			<div>
+				<p class="dates">18 janvier 2019</p>
+				<p class="dates">18 janvier 2019</p>
+				<p class="dates">18 janvier 2019</p>
+				<br>
+				<p class="dates">18 janvier 2019</p>
+				<p class="dates">18 janvier 2019</p>
+				<p class="dates">18 janvier 2019</p>
+				<p class="dates">18 janvier 2019</p>
+				<br>
+				<p class="dates">18 janvier 2019</p>
+				<p class="dates">18 janvier 2019</p>
+			</div>
+		</div>
+		
+	</div>
+	
+</div>
+@stop
